@@ -44,8 +44,8 @@ public class StatesManager : MonoBehaviour
         return CurrentState switch
         {
             PlayerStates.Liquid => 1f,
-            PlayerStates.Solid => 2f,
-            PlayerStates.Gas => 0.5f,
+            PlayerStates.Solid => 25f,
+            PlayerStates.Gas => 0.05f,
             _ => 1f
         };
     }
@@ -56,7 +56,7 @@ public class StatesManager : MonoBehaviour
         {
             PlayerStates.Liquid => 1f,
             PlayerStates.Solid => 2f,
-            PlayerStates.Gas => 0.5f,
+            PlayerStates.Gas => -0.001f,
             _ => 1f
         };
     }
