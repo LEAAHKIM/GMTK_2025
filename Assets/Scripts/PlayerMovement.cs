@@ -5,7 +5,6 @@ public class PlayerMovement : MonoBehaviour
 {
     const int GROUNDLAYER = 1 << 6;
 
-
     private Rigidbody2D _rb;
     private float _movementInput = 0;
     private bool _jumpPressInput;
@@ -20,8 +19,6 @@ public class PlayerMovement : MonoBehaviour
 
     //i use _jumping and _jumpapexy
     private bool _jumping;
-
-
 
     [Header("Walking")]
     public float maxSpeed;
@@ -53,12 +50,12 @@ public class PlayerMovement : MonoBehaviour
     private bool _holdingJump;
     private float _gravity;
     private float _initialJumpVelocity;
-    private PlayerStates _playerState;
+    private StatesManager _statesManager;
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
-        _playerState = GetComponent<PlayerStates>();
+        _statesManager = GetComponent<StatesManager>();
     }
     private void Start()
     {
@@ -84,20 +81,8 @@ public class PlayerMovement : MonoBehaviour
 
         void ApplyXMovement()
         {
-            //movement behavior changes based on player state
-            float speedModifier = 1f;
-            switch (_playerState.CurrentState)
-            {
-                case PlayerStates.PlayerState.Liquid:
-                    speedModifier = 1f;
-                    break;
-                case PlayerStates.PlayerState.Solid:
-                    speedModifier = 2f;
-                    break;
-                case PlayerStates.PlayerState.Gas:
-                    speedModifier = 0.5f;
-                    break;
-            }
+            float speedModifier = _statesManager.GetSpeedModifier();
+
             //we want friction to not affect movement.
             if (_movementInput == 0)
             {
@@ -114,7 +99,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         void ApplyYMovement()
-        {
+        {            
             bool onground = Physics2D.BoxCast((Vector2)transform.position + ongroundBoxOffset, ongroundBoxSize, 0, Vector2.zero, 0, GROUNDLAYER);
 
             //game feel stuff
@@ -124,20 +109,8 @@ public class PlayerMovement : MonoBehaviour
             if (onground) { _lastOnGroundTime = Time.time; _jumping = false; }
 
             //gravity
-            float currentGravity = _gravity;
-            switch (_playerState.CurrentState)
-            {
-                case PlayerStates.PlayerState.Liquid:
-                    currentGravity = _gravity; 
-                    break;
-                case PlayerStates.PlayerState.Solid:
-                    currentGravity *= 2f; 
-                    break;
-                case PlayerStates.PlayerState.Gas:
-                    currentGravity *= 0.25f; 
-                    break;
-            }
-            
+            float currentGravity = _statesManager.GetGravityModifier() * _gravity;
+
             if (_holdingJump && _jumping && (Mathf.Abs(velocity.y) < jumpApexWhenAbsVelYIsSmallerThan)) { currentGravity *= jumpApexGravityMult; }
             //if (!_holdingJump && _jumping) { currentGravity *= stopJumpGravityMultiplier; }
             velocity.y -= currentGravity * Time.fixedDeltaTime;

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f1964978efa704c4e966cf5ff2552665
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - _liquidSprite: {fileID: 21300000, guid: fc06a805f9caa470f91ebc48f0597e64, type: 3}
+  - _solidSprite: {fileID: 21300000, guid: 836985a462a7f4d4d8a368d12687b341, type: 3}
+  - _gasSprite: {fileID: 21300000, guid: b066b4505ae8d4022855781cff5516fb, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
