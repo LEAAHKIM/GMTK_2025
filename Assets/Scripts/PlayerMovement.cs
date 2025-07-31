@@ -53,10 +53,12 @@ public class PlayerMovement : MonoBehaviour
     private bool _holdingJump;
     private float _gravity;
     private float _initialJumpVelocity;
+    private PlayerStates _playerState;
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _playerState = GetComponent<PlayerStates>();
     }
     private void Start()
     {
@@ -82,6 +84,20 @@ public class PlayerMovement : MonoBehaviour
 
         void ApplyXMovement()
         {
+            //movement behavior changes based on player state
+            float speedModifier = 1f;
+            switch (_playerState.CurrentState)
+            {
+                case PlayerStates.PlayerState.Liquid:
+                    speedModifier = 1f;
+                    break;
+                case PlayerStates.PlayerState.Solid:
+                    speedModifier = 2f;
+                    break;
+                case PlayerStates.PlayerState.Gas:
+                    speedModifier = 0.5f;
+                    break;
+            }
             //we want friction to not affect movement.
             if (_movementInput == 0)
             {
@@ -92,10 +108,11 @@ public class PlayerMovement : MonoBehaviour
             //for smoothness
             if ((velocity.x > 0 && _movementInput < 0) || (velocity.x < 0 && _movementInput > 0)) { velocity.x = 0; }
             //movement
-            velocity.x += (1 / accelerationTime) * maxSpeed * _movementInput * Time.fixedDeltaTime;
+            velocity.x += (1 / accelerationTime) * maxSpeed * _movementInput * speedModifier * Time.fixedDeltaTime;
             if (velocity.x > maxSpeed) { velocity.x = maxSpeed; }
             else if (velocity.x < -maxSpeed) { velocity.x = -maxSpeed; }
         }
+
         void ApplyYMovement()
         {
             bool onground = Physics2D.BoxCast((Vector2)transform.position + ongroundBoxOffset, ongroundBoxSize, 0, Vector2.zero, 0, GROUNDLAYER);
@@ -108,6 +125,19 @@ public class PlayerMovement : MonoBehaviour
 
             //gravity
             float currentGravity = _gravity;
+            switch (_playerState.CurrentState)
+            {
+                case PlayerStates.PlayerState.Liquid:
+                    currentGravity = _gravity; 
+                    break;
+                case PlayerStates.PlayerState.Solid:
+                    currentGravity *= 2f; 
+                    break;
+                case PlayerStates.PlayerState.Gas:
+                    currentGravity *= 0.25f; 
+                    break;
+            }
+            
             if (_holdingJump && _jumping && (Mathf.Abs(velocity.y) < jumpApexWhenAbsVelYIsSmallerThan)) { currentGravity *= jumpApexGravityMult; }
             //if (!_holdingJump && _jumping) { currentGravity *= stopJumpGravityMultiplier; }
             velocity.y -= currentGravity * Time.fixedDeltaTime;
