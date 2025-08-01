@@ -31,6 +31,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "UseWater",
+                    "type": "Button",
+                    "id": "82735912-3a72-4446-8b18-761733db51f1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -102,8 +111,8 @@
                 },
                 {
                     "name": "",
-                    "id": "5f209ef8-5648-4457-8b7d-b51265ef3c84",
-                    "path": "<Keyboard>/space",
+                    "id": "0313d6e8-58a0-4af6-a590-1afde434d7a5",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -113,8 +122,8 @@
                 },
                 {
                     "name": "",
-                    "id": "0313d6e8-58a0-4af6-a590-1afde434d7a5",
-                    "path": "<Keyboard>/w",
+                    "id": "993bee06-a57c-4580-a191-888c0d7b6a92",
+                    "path": "<Keyboard>/upArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -130,6 +139,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "90ad3006-777c-4e8d-967d-1791baca4797",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UseWater",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
