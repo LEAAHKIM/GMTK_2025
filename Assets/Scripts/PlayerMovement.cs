@@ -5,7 +5,6 @@ public class PlayerMovement : MonoBehaviour
 {
     const int GROUNDLAYER = 1 << 6;
 
-
     private Rigidbody2D _rb;
     private float _movementInput = 0;
     private bool _jumpPressInput;
@@ -20,8 +19,6 @@ public class PlayerMovement : MonoBehaviour
 
     //i use _jumping and _jumpapexy
     private bool _jumping;
-
-
 
     [Header("Walking")]
     public float maxSpeed;
@@ -53,10 +50,12 @@ public class PlayerMovement : MonoBehaviour
     private bool _holdingJump;
     private float _gravity;
     private float _initialJumpVelocity;
+    private StatesManager _statesManager;
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _statesManager = GetComponent<StatesManager>();
     }
     private void Start()
     {
@@ -82,6 +81,8 @@ public class PlayerMovement : MonoBehaviour
 
         void ApplyXMovement()
         {
+            float speedModifier = _statesManager.GetSpeedModifier();
+
             //we want friction to not affect movement.
             if (_movementInput == 0)
             {
@@ -92,12 +93,13 @@ public class PlayerMovement : MonoBehaviour
             //for smoothness
             if ((velocity.x > 0 && _movementInput < 0) || (velocity.x < 0 && _movementInput > 0)) { velocity.x = 0; }
             //movement
-            velocity.x += (1 / accelerationTime) * maxSpeed * _movementInput * Time.fixedDeltaTime;
+            velocity.x += (1 / accelerationTime) * maxSpeed * _movementInput * speedModifier * Time.fixedDeltaTime;
             if (velocity.x > maxSpeed) { velocity.x = maxSpeed; }
             else if (velocity.x < -maxSpeed) { velocity.x = -maxSpeed; }
         }
+
         void ApplyYMovement()
-        {
+        {            
             bool onground = Physics2D.BoxCast((Vector2)transform.position + ongroundBoxOffset, ongroundBoxSize, 0, Vector2.zero, 0, GROUNDLAYER);
 
             //game feel stuff
@@ -107,7 +109,8 @@ public class PlayerMovement : MonoBehaviour
             if (onground) { _lastOnGroundTime = Time.time; _jumping = false; }
 
             //gravity
-            float currentGravity = _gravity;
+            float currentGravity = _statesManager.GetGravityModifier() * _gravity;
+
             if (_holdingJump && _jumping && (Mathf.Abs(velocity.y) < jumpApexWhenAbsVelYIsSmallerThan)) { currentGravity *= jumpApexGravityMult; }
             //if (!_holdingJump && _jumping) { currentGravity *= stopJumpGravityMultiplier; }
             velocity.y -= currentGravity * Time.fixedDeltaTime;
