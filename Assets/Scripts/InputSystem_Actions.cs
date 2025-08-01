@@ -53,6 +53,24 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MovingPlatformMove"",
+                    ""type"": ""Value"",
+                    ""id"": ""563725fd-586f-4653-b5a0-cf7ed36b5a86"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""InteractKeyPressed"",
+                    ""type"": ""Button"",
+                    ""id"": ""222986c7-f142-477b-a225-307cf7ed2f0e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -110,6 +128,72 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""c997a208-0146-4539-bde4-e0ab1284be03"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MovingPlatformMove"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""e2dc1623-bf30-44f9-86c6-24630bb235bb"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MovingPlatformMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""a9811f92-9d38-4a05-97e5-11b089930002"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MovingPlatformMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""80f5c9f1-e625-48d4-96ca-a850d513ecd5"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MovingPlatformMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""652fc273-12e6-431d-b063-b7e4621e6e2d"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MovingPlatformMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ab9d0726-e958-4086-a5f5-3ebb87540243"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InteractKeyPressed"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -121,6 +205,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
+        m_Player_MovingPlatformMove = m_Player.FindAction("MovingPlatformMove", throwIfNotFound: true);
+        m_Player_InteractKeyPressed = m_Player.FindAction("InteractKeyPressed", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -185,6 +271,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Look;
+    private readonly InputAction m_Player_MovingPlatformMove;
+    private readonly InputAction m_Player_InteractKeyPressed;
     public struct PlayerActions
     {
         private @InputSystem_Actions m_Wrapper;
@@ -192,6 +280,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Look => m_Wrapper.m_Player_Look;
+        public InputAction @MovingPlatformMove => m_Wrapper.m_Player_MovingPlatformMove;
+        public InputAction @InteractKeyPressed => m_Wrapper.m_Player_InteractKeyPressed;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -210,6 +300,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Look.started += instance.OnLook;
             @Look.performed += instance.OnLook;
             @Look.canceled += instance.OnLook;
+            @MovingPlatformMove.started += instance.OnMovingPlatformMove;
+            @MovingPlatformMove.performed += instance.OnMovingPlatformMove;
+            @MovingPlatformMove.canceled += instance.OnMovingPlatformMove;
+            @InteractKeyPressed.started += instance.OnInteractKeyPressed;
+            @InteractKeyPressed.performed += instance.OnInteractKeyPressed;
+            @InteractKeyPressed.canceled += instance.OnInteractKeyPressed;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -223,6 +319,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Look.started -= instance.OnLook;
             @Look.performed -= instance.OnLook;
             @Look.canceled -= instance.OnLook;
+            @MovingPlatformMove.started -= instance.OnMovingPlatformMove;
+            @MovingPlatformMove.performed -= instance.OnMovingPlatformMove;
+            @MovingPlatformMove.canceled -= instance.OnMovingPlatformMove;
+            @InteractKeyPressed.started -= instance.OnInteractKeyPressed;
+            @InteractKeyPressed.performed -= instance.OnInteractKeyPressed;
+            @InteractKeyPressed.canceled -= instance.OnInteractKeyPressed;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -245,5 +347,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
+        void OnMovingPlatformMove(InputAction.CallbackContext context);
+        void OnInteractKeyPressed(InputAction.CallbackContext context);
     }
 }
