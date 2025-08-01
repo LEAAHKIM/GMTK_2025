@@ -7,16 +7,16 @@ using Unity.VisualScripting;
 
 public class WaterManager : MonoBehaviour
 {
-    public Image waterBar;
-    public float waterAmount = 0.5f;
-    private float waterLerpDuration = 0.35f; // animation time
-    private Coroutine fillAnimCoroutine;
-
+    public Image _waterBar;
+    public float _waterAmount = 0.5f;
+    private float _waterLerpDuration = 0.35f; // animation time
+    private Coroutine _fillAnimCoroutine;
+    private bool _isEvaporating = false;
 
     //to check if player has enough water for an action
     public bool UseWater(float amount)
     {
-        if (waterAmount >= amount)
+        if (_waterAmount >= amount)
         {
             DecreaseWater(amount);
             return true;
@@ -30,49 +30,67 @@ public class WaterManager : MonoBehaviour
 
     public void DecreaseWater(float amount)
     {
-        waterAmount -= amount;
-        if (waterAmount < 0)
+        if (_isEvaporating) return;
+
+        _waterAmount -= amount;
+        if (_waterAmount < 0)
         {
-            waterAmount = 0;
-            StartFillAnimation(waterAmount / 1f);
-            // TODO: evaporate here ?
-            SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+            _waterAmount = 0;
+            StartFillAnimation(_waterAmount / 1f);
+            StartCoroutine(Evaporate());
         }
         else
         {
-            StartFillAnimation(waterAmount / 1f);
+            StartFillAnimation(_waterAmount / 1f);
         }
     }
 
     public void IncreaseWater(float amount)
     {
-        waterAmount += amount;
-        waterAmount = Mathf.Clamp(waterAmount, 0f, 1f);
-        StartFillAnimation(waterAmount / 1f);
+        _waterAmount += amount;
+        _waterAmount = Mathf.Clamp(_waterAmount, 0f, 1f);
+        StartFillAnimation(_waterAmount / 1f);
     }
 
     private void StartFillAnimation(float targetFill)
     {
-        if (fillAnimCoroutine != null)
+        if (_fillAnimCoroutine != null)
         {
-            StopCoroutine(fillAnimCoroutine);
+            StopCoroutine(_fillAnimCoroutine);
         }
-        fillAnimCoroutine = StartCoroutine(AnimateFillAmount(targetFill));
+        _fillAnimCoroutine = StartCoroutine(AnimateFillAmount(targetFill));
     }
 
     private IEnumerator AnimateFillAmount(float targetFill)
     {
-        float startFill = waterBar.fillAmount;
+        float startFill = _waterBar.fillAmount;
         float elapsed = 0f;
 
-        while (elapsed < waterLerpDuration)
+        while (elapsed < _waterLerpDuration)
         {
             elapsed += Time.deltaTime;
-            waterBar.fillAmount = Mathf.Lerp(startFill, targetFill, elapsed / waterLerpDuration);
+            _waterBar.fillAmount = Mathf.Lerp(startFill, targetFill, elapsed / _waterLerpDuration);
             yield return null;
         }
 
-        waterBar.fillAmount = targetFill;
+        _waterBar.fillAmount = targetFill;
+    }
+
+    private IEnumerator Evaporate()
+    {
+        _isEvaporating = true;
+        //TODO: play poof animation 
+        Animator animator = GetComponent<Animator>();
+        if (animator != null)
+        {
+            animator.SetTrigger("Poof");
+            yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
+        }
+        else
+        {
+            yield return new WaitForSeconds(1f);
+        }
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
     }
 
     void OnTriggerEnter2D(Collider2D other)

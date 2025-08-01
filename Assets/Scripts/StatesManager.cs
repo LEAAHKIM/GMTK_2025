@@ -13,6 +13,7 @@ public class StatesManager : MonoBehaviour
     public Sprite _liquidSprite;
     public Sprite _solidSprite;
     public Sprite _gasSprite;
+    public Sprite _cloudSprite; // respawn state
 
     private void Awake()
     {
@@ -31,12 +32,13 @@ public class StatesManager : MonoBehaviour
             PlayerStates.Liquid => _liquidSprite,
             PlayerStates.Solid => _solidSprite,
             PlayerStates.Gas => _gasSprite,
+            PlayerStates.Cloud => _cloudSprite,
             _ => _sr.sprite
         };
 
-        Debug.Log($"Player state changed to: {CurrentState}");
-        Debug.Log($"Current speed: {_rb.velocity}");
-        Debug.Log($"Current gravity: {_rb.gravityScale}");
+        //Debug.Log($"Player state changed to: {CurrentState}");
+        //Debug.Log($"Current speed: {_rb.velocity}");
+        //Debug.Log($"Current gravity: {_rb.gravityScale}");
     }
 
     public float GetSpeedModifier()
@@ -45,7 +47,7 @@ public class StatesManager : MonoBehaviour
         {
             PlayerStates.Liquid => 1f,
             PlayerStates.Solid => 25f,
-            PlayerStates.Gas => 0.05f,
+            PlayerStates.Gas => 0.03f,
             _ => 1f
         };
     }

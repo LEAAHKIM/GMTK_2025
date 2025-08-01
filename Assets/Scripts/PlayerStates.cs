@@ -6,5 +6,6 @@ public enum PlayerStates
 {
     Liquid,
     Solid,
-    Gas
+    Gas, 
+    Cloud //respawn
 }
