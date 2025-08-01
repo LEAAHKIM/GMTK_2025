@@ -8,7 +8,10 @@ using Unity.VisualScripting;
 public class WaterManager : MonoBehaviour
 {
     public Image waterBar;
-    public float waterAmount = 0.3f;
+    public float waterAmount = 0.5f;
+    private float waterLerpDuration = 0.35f; // animation time
+    private Coroutine fillAnimCoroutine;
+
 
     //to check if player has enough water for an action
     public bool UseWater(float amount)
@@ -28,12 +31,16 @@ public class WaterManager : MonoBehaviour
     public void DecreaseWater(float amount)
     {
         waterAmount -= amount;
-        waterBar.fillAmount = waterAmount / 1f;
         if (waterAmount < 0)
         {
             waterAmount = 0;
-            // TODO: player evaporates and gets sent to the start appearing as a cloud
+            StartFillAnimation(waterAmount / 1f);
+            // TODO: evaporate here ?
             SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+        }
+        else
+        {
+            StartFillAnimation(waterAmount / 1f);
         }
     }
 
@@ -41,7 +48,31 @@ public class WaterManager : MonoBehaviour
     {
         waterAmount += amount;
         waterAmount = Mathf.Clamp(waterAmount, 0f, 1f);
-        waterBar.fillAmount = waterAmount / 1f;
+        StartFillAnimation(waterAmount / 1f);
+    }
+
+    private void StartFillAnimation(float targetFill)
+    {
+        if (fillAnimCoroutine != null)
+        {
+            StopCoroutine(fillAnimCoroutine);
+        }
+        fillAnimCoroutine = StartCoroutine(AnimateFillAmount(targetFill));
+    }
+
+    private IEnumerator AnimateFillAmount(float targetFill)
+    {
+        float startFill = waterBar.fillAmount;
+        float elapsed = 0f;
+
+        while (elapsed < waterLerpDuration)
+        {
+            elapsed += Time.deltaTime;
+            waterBar.fillAmount = Mathf.Lerp(startFill, targetFill, elapsed / waterLerpDuration);
+            yield return null;
+        }
+
+        waterBar.fillAmount = targetFill;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -58,3 +89,4 @@ public class WaterManager : MonoBehaviour
         }
     }
 }
+
