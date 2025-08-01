@@ -33,9 +33,18 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "UseWater",
+                    "name": "MovingPlatformMove",
+                    "type": "Value",
+                    "id": "563725fd-586f-4653-b5a0-cf7ed36b5a86",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "InteractKeyPressed",
                     "type": "Button",
-                    "id": "82735912-3a72-4446-8b18-761733db51f1",
+                    "id": "222986c7-f142-477b-a225-307cf7ed2f0e",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -77,53 +86,9 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "1D Axis",
-                    "id": "c741bb96-d34c-4bb4-ac4a-eceaa3ce5b48",
-                    "path": "1DAxis",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Move",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "negative",
-                    "id": "51ca25e5-f5d0-44f7-adc4-6979f99a4a05",
-                    "path": "<Keyboard>/downArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "3845a208-1a8b-405e-95ce-2965594c854f",
-                    "path": "<Keyboard>/upArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
                     "name": "",
-                    "id": "0313d6e8-58a0-4af6-a590-1afde434d7a5",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "993bee06-a57c-4580-a191-888c0d7b6a92",
-                    "path": "<Keyboard>/upArrow",
+                    "id": "5f209ef8-5648-4457-8b7d-b51265ef3c84",
+                    "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -143,13 +108,68 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "90ad3006-777c-4e8d-967d-1791baca4797",
-                    "path": "<Keyboard>/space",
+                    "name": "2D Vector",
+                    "id": "c997a208-0146-4539-bde4-e0ab1284be03",
+                    "path": "2DVector",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "UseWater",
+                    "action": "MovingPlatformMove",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "e2dc1623-bf30-44f9-86c6-24630bb235bb",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MovingPlatformMove",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "a9811f92-9d38-4a05-97e5-11b089930002",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MovingPlatformMove",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "80f5c9f1-e625-48d4-96ca-a850d513ecd5",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MovingPlatformMove",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "652fc273-12e6-431d-b063-b7e4621e6e2d",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MovingPlatformMove",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "ab9d0726-e958-4086-a5f5-3ebb87540243",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InteractKeyPressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
