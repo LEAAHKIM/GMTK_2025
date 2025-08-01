@@ -15,8 +15,9 @@ public class CameraMovement : MonoBehaviour
     public Transform target;
     public Vector2 offset;
     public float cameraSmoothTimeX;
-    public float cameraSmoothTimeY;
-
+    public float cameraSmoothTimeYMax;
+    public float cameraSmoothTimeYMin;
+    public float cameraOffsetWhenFalling=2;
     [Header("Camera limiting boxes")]
     // not really deadboxsize, deadboxsize/2 to avoid runtime division
     public Vector2 deadBoxExtents;
@@ -53,7 +54,11 @@ public class CameraMovement : MonoBehaviour
         cam = GetComponent<Camera>();
         current = this;
     }
-
+    public void OffsetCameraTargetPos(Vector2 offset)
+    {
+        _cameraTargetPos += offset;
+        _deadBoxPos += offset;
+    }
     private void Start()
     {
         // not really cam height, cam height / 2. add this up/down to get the position of cam bounds
@@ -72,6 +77,9 @@ public class CameraMovement : MonoBehaviour
     {
         
         Vector2 targetPos = (Vector2)target.position + offset;
+        float currentCameraSmoothY = cameraSmoothTimeYMax;
+
+        // this part is only called when camera is bound to player, so i access player only here.
         if (applyLookahead)
         {
             //inputx
@@ -82,8 +90,10 @@ public class CameraMovement : MonoBehaviour
 
             //mouse
             Vector2 mouseOffset = (mouseWorldPos - (Vector2)target.transform.position).normalized;
-
             targetPos += mouseOffset * mouseLookAheadWeight;
+            float t = -LevelManager.current.playerMovement._rb.velocity.y / 20;
+            currentCameraSmoothY = Mathf.Lerp(cameraSmoothTimeYMax, cameraSmoothTimeYMin, t);
+            targetPos.y -= Mathf.Lerp(0, cameraOffsetWhenFalling, t); 
         }
         else { _currentLookAheadProgress = 0; }
         
@@ -110,7 +120,7 @@ public class CameraMovement : MonoBehaviour
 
         // camera movement with cool smoothness function
         float smoothDampX = Mathf.SmoothDamp(transform.position.x, _cameraTargetPos.x, ref _currentCameraVelX, cameraSmoothTimeX, Mathf.Infinity, Time.deltaTime);
-        float smoothDampY = Mathf.SmoothDamp(transform.position.y, _cameraTargetPos.y, ref _currentCameraVelY, cameraSmoothTimeY, Mathf.Infinity, Time.deltaTime);
+        float smoothDampY = Mathf.SmoothDamp(transform.position.y, _cameraTargetPos.y, ref _currentCameraVelY, currentCameraSmoothY, Mathf.Infinity, Time.deltaTime);
         transform.position = new Vector3(smoothDampX, smoothDampY, transform.position.z);
         _lastTargetPos = targetPos;
     }

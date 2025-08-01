@@ -3,10 +3,12 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    const int GROUNDLAYER = 1 << 6;
+    //includes movingplatform layer too since it moves as well
+    const int GROUNDLAYER = (1 << 6);
+    const int MOVINGPLATFORMLAYER = (1 << 7);
 
 
-    private Rigidbody2D _rb;
+    [HideInInspector]public Rigidbody2D _rb;
     private float _movementInput = 0;
     private bool _jumpPressInput;
     private bool _jumpHoldInput;
@@ -54,12 +56,30 @@ public class PlayerMovement : MonoBehaviour
     private float _gravity;
     private float _initialJumpVelocity;
 
+    public bool freezeMovement = false;
+    private Vector2 freezeAddedMovement = Vector2.zero;
+    
+    [HideInInspector]public Vector2 _prevPosition;
+    public Transform spriteRendererTransform;
+    private float lastFixedUpdateTime;
+    public void FreezePlayerMovement()
+    {
+        freezeAddedMovement = _rb.velocity;
+        _rb.bodyType = RigidbodyType2D.Static;
+        freezeMovement = true;
+    }
+    public void UnFreezePlayerMovement()
+    {
+        _rb.bodyType = RigidbodyType2D.Dynamic;
+        freezeMovement = false;
+    }
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
     }
     private void Start()
     {
+        _prevPosition = transform.position;
         if (jumpApexTime <= 0) { Debug.LogError("jumpapextime can't be negative or 0"); }
         _gravity = (2 * jumpHeight) / (jumpApexTime * jumpApexTime);
         _initialJumpVelocity = (2 * jumpHeight) / jumpApexTime;
@@ -68,17 +88,28 @@ public class PlayerMovement : MonoBehaviour
         InputSystem.current.actions.Player.Jump.performed += ctx => { _jumpPressInput = true; _jumpHoldInput = true; };
         InputSystem.current.actions.Player.Jump.canceled += ctx => { _jumpHoldInput = false; };
     }
+    private void LateUpdate()
+    {
+        spriteRendererTransform.position = Vector3.Lerp(_prevPosition, transform.position, (Time.time - lastFixedUpdateTime) / 0.02f);
+    }
+
     private void FixedUpdate()
     {
-        Vector2 velocity = _rb.velocity;
-        // handles walking, friction and stuff
-        ApplyXMovement();
-        // handles jumping, gravity and stuff
-        ApplyYMovement();
-        _rb.velocity = velocity;
-
+        Vector2 velocity=Vector2.zero;
+        _prevPosition = transform.position;
+        if (!freezeMovement)
+        {
+            velocity = _rb.velocity+freezeAddedMovement;
+            freezeAddedMovement= Vector2.zero;
+            // handles walking, friction and stuff
+            ApplyXMovement();
+            // handles jumping, gravity and stuff
+            ApplyYMovement();
+            _rb.velocity = velocity;
+        }
         //since it is a press input, once we process it we dont need it
         _jumpPressInput = false;
+        lastFixedUpdateTime = Time.time;
 
         void ApplyXMovement()
         {
@@ -99,12 +130,17 @@ public class PlayerMovement : MonoBehaviour
         void ApplyYMovement()
         {
             bool onground = Physics2D.BoxCast((Vector2)transform.position + ongroundBoxOffset, ongroundBoxSize, 0, Vector2.zero, 0, GROUNDLAYER);
-
+            RaycastHit2D movingPlatformHit =  Physics2D.BoxCast((Vector2)transform.position + ongroundBoxOffset, ongroundBoxSize, 0, Vector2.zero, 0, MOVINGPLATFORMLAYER);
             //game feel stuff
-
             if (!_jumpHoldInput) { _holdingJump = false; if (!_isJumpCut && _jumping) { velocity.y *= jumpBreakVelYMult; _isJumpCut = true; } }
             if (_jumpPressInput) { _lastJumpPressTime = Time.time; }
-            if (onground) { _lastOnGroundTime = Time.time; _jumping = false; }
+            if (onground || movingPlatformHit) { _lastOnGroundTime = Time.time; _jumping = false; }
+            
+            if(movingPlatformHit)
+            {
+                transform.position += (Vector3)movingPlatformHit.collider.transform.GetComponent<MovingPlatform>().GetLastOffset();
+                //_prevPosition = transform.position;
+            }
 
             //gravity
             float currentGravity = _gravity;
