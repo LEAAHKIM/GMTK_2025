@@ -99,6 +99,7 @@ public class WaterManager : MonoBehaviour
         {
             IncreaseWater(0.2f); // Example amount to increase water
             Debug.Log("Water collected!");
+            Destroy(other.gameObject);
         }
         if (other.CompareTag("WaterDeplete"))
         {
