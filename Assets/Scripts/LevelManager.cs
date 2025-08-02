@@ -26,8 +26,13 @@ public class LevelManager : MonoBehaviour
     private int currentPlatformSize;
     private float _lastFUpdateTime;
 
+    public bool zoomOutInput;
+
     public GameObject timeLeftGameObject;
     public TMPro.TextMeshProUGUI timeLeftText;
+    private float _cameraStartSize;
+    public float cameraZoomOutSpeed;
+    public float cameraZoomOutSize;
     private void Awake()
     {
         current = this;
@@ -38,6 +43,15 @@ public class LevelManager : MonoBehaviour
         _playerTransform = playerMovement.transform;
         InputSystem.current.actions.Player.MovingPlatformMove.performed += ctx => { moveMovingPlatformInput = ctx.ReadValue<Vector2>(); };
         InputSystem.current.actions.Player.MovingPlatformMove.canceled += ctx => { moveMovingPlatformInput = Vector2.zero; };
+
+        InputSystem.current.actions.Player.ZoomOutKey.performed += ctx => { zoomOutInput = true; };
+        InputSystem.current.actions.Player.ZoomOutKey.canceled += ctx => { zoomOutInput = false; };
+        currentGameState = GameState.PlayerControl;
+
+        _cameraStartSize = cameraMovement.cam.orthographicSize;
+        float width = currentLevelExtents.y * cameraMovement.cam.aspect;
+        if (width > currentLevelExtents.x) { cameraZoomOutSize = currentLevelExtents.y; }
+        else { cameraZoomOutSize = currentLevelExtents.x * (1.0f / cameraMovement.cam.aspect); }
     }
     public void LoopCreateMovingPlatform(MovingPlatform p)
     {
@@ -46,7 +60,7 @@ public class LevelManager : MonoBehaviour
         _currentMovingPlatformPos = p.transform.position;
         currentGameState = GameState.MovingPlatform;
         currentPlatformIndex = 0;
-        currentPlatformSize = (int)(p.platformMoveTime * 50.0f) ;
+        currentPlatformSize = (int)(p.platformMoveTime * 50.0f);
         p.InitializePositions(currentPlatformSize);
         cameraMovement.applyLookahead = false;
         cameraMovement.target = p.spriteTransform;
@@ -64,16 +78,40 @@ public class LevelManager : MonoBehaviour
         currentPlatformIndex = 0;
         currentPlatformSize = 0;
         currentGameState = GameState.PlayerControl;
-        cameraMovement.target = playerMovement.transform;
+        cameraMovement.target = playerMovement.spriteRendererTransform;
         cameraMovement.applyLookahead = true;
         playerMovement.UnFreezePlayerMovement();
     }
     private void Update()
     {
-        if(currentGameState==GameState.MovingPlatform&&currentPlatformIndex>1)
+        switch (currentGameState)
         {
-            _currentMovingPlatform.spriteTransform.position = 
-                Vector2.Lerp(_currentMovingPlatform._positions[currentPlatformIndex-2], _currentMovingPlatform._positions[currentPlatformIndex-1], (Time.time-_lastFUpdateTime)/0.02f);
+            case GameState.PlayerControl:
+                PlayerControl();
+                break;
+            case GameState.MovingPlatform:
+                MovePlatform();
+                break;
+            default:
+                break;
+        }
+
+        void MovePlatform()
+        {
+            _currentMovingPlatform.spriteTransform.position =
+    Vector2.Lerp(_currentMovingPlatform._positions[currentPlatformIndex - 2], _currentMovingPlatform._positions[currentPlatformIndex - 1], (Time.time - _lastFUpdateTime) / 0.02f);
+        }
+        void PlayerControl()
+        {
+            cameraMovement.SetCameraSize(Mathf.Lerp(cameraMovement.cam.orthographicSize, zoomOutInput ? cameraZoomOutSize : _cameraStartSize, Time.deltaTime * cameraZoomOutSpeed));
+            if (zoomOutInput)
+            {
+                cameraMovement.target = null;
+            }
+            else
+            {
+                cameraMovement.target = playerMovement.spriteRendererTransform;
+            }
         }
     }
     private void FixedUpdate()
@@ -89,17 +127,21 @@ public class LevelManager : MonoBehaviour
             default:
                 break;
         }
+
         void ApplyLevelLooping()
         {
             Vector3 playerPos = _playerTransform.position;
             Vector3 camPos = cameraMovement.transform.position;
-            if (playerPos.x > currentLevelExtents.x) { playerPos.x -= currentLevelExtents.x * 2; camPos.x -= currentLevelExtents.x * 2; cameraMovement.OffsetCameraTargetPos(new Vector2(-currentLevelExtents.x * 2, 0)); }
-            else if (playerPos.x < -currentLevelExtents.x) { playerPos.x += currentLevelExtents.x * 2; camPos.x += currentLevelExtents.x * 2; cameraMovement.OffsetCameraTargetPos(new Vector2(currentLevelExtents.x * 2, 0)); }
-            if (playerPos.y > currentLevelExtents.y) { playerPos.y -= currentLevelExtents.y * 2; camPos.y -= currentLevelExtents.y * 2; cameraMovement.OffsetCameraTargetPos(new Vector2(0, -currentLevelExtents.y * 2)); }
-            if (playerPos.y < -currentLevelExtents.y) { playerPos.y += currentLevelExtents.y * 2; camPos.y += currentLevelExtents.y * 2; cameraMovement.OffsetCameraTargetPos(new Vector2(0, currentLevelExtents.y * 2)); }
-            cameraMovement.transform.position = camPos;
+            if (playerPos.x > currentLevelExtents.x) { playerPos.x -= currentLevelExtents.x * 2; camPos.x -= currentLevelExtents.x * 2; cameraMovement.OffsetCameraTargetPos(new Vector2(-currentLevelExtents.x * 2, 0), !zoomOutInput); }
+            else if (playerPos.x < -currentLevelExtents.x) { playerPos.x += currentLevelExtents.x * 2; camPos.x += currentLevelExtents.x * 2; cameraMovement.OffsetCameraTargetPos(new Vector2(currentLevelExtents.x * 2, 0), !zoomOutInput); }
+            if (playerPos.y > currentLevelExtents.y) { playerPos.y -= currentLevelExtents.y * 2; camPos.y -= currentLevelExtents.y * 2; cameraMovement.OffsetCameraTargetPos(new Vector2(0, -currentLevelExtents.y * 2), !zoomOutInput); }
+            if (playerPos.y < -currentLevelExtents.y) { playerPos.y += currentLevelExtents.y * 2; camPos.y += currentLevelExtents.y * 2; cameraMovement.OffsetCameraTargetPos(new Vector2(0, currentLevelExtents.y * 2), !zoomOutInput); }
+            if (!zoomOutInput)
+            {
+                cameraMovement.transform.position = camPos;
+            }
             _playerTransform.position = playerPos;
-            playerMovement._prevPosition = playerPos;   
+            playerMovement._prevPosition = playerPos;
         }
 
         void MovingDirectionLogic()
@@ -107,7 +149,7 @@ public class LevelManager : MonoBehaviour
             Vector2 dir;
             if (moveMovingPlatformInput.magnitude > 0) { dir = moveMovingPlatformInput.normalized; }
             else { dir = Vector2.zero; return; }
-            _currentMovingPlatform.transform.position = _currentMovingPlatform.transform.position +  (Vector3)(dir * (_currentMovingPlatform.platformMoveSpeed * Time.fixedDeltaTime));
+            _currentMovingPlatform.transform.position = _currentMovingPlatform.transform.position + (Vector3)(dir * (_currentMovingPlatform.platformMoveSpeed * Time.fixedDeltaTime));
             _currentMovingPlatformPos = _currentMovingPlatform.transform.position;
             _currentMovingPlatform._positions[currentPlatformIndex] = _currentMovingPlatformPos;
             currentPlatformIndex++;

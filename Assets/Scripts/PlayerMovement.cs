@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -50,11 +50,21 @@ public class PlayerMovement : MonoBehaviour
     public float jumpApexGravityMult = 0.75f;
     public float jumpApexWhenAbsVelYIsSmallerThan = 0.4f;
     public float jumpBreakVelYMult = 0.5f;
-
     private bool _isJumpCut;
     private bool _holdingJump;
     private float _gravity;
     private float _initialJumpVelocity;
+
+    private Animator _animator;
+    private SpriteRenderer _spriteRend;
+    private bool _lookingRight;
+    private static int walkAnim = Animator.StringToHash("Walk");
+    private static int turnIntoCloudAnim = Animator.StringToHash("TurnIntoCloud");
+    private static int turnIntoPlayerAnim = Animator.StringToHash("TurnIntoPlayer");
+    private static int turnAnim = Animator.StringToHash("Turn");
+    private static int jumpAnim = Animator.StringToHash("Jump");
+    private static int jumpEndAnim = Animator.StringToHash("JumpEnd");
+    private static int chibiPoseAnim = Animator.StringToHash("ChibiPose");
 
     public bool freezeMovement = false;
     private Vector2 freezeAddedMovement = Vector2.zero;
@@ -62,6 +72,10 @@ public class PlayerMovement : MonoBehaviour
     [HideInInspector] public Vector2 _prevPosition;
     public Transform spriteRendererTransform;
     private float lastFixedUpdateTime;
+
+
+    //CHARACTER TALK STUFF
+    public List<AudioClip> jumpAudios;  
     public void FreezePlayerMovement()
     {
         freezeAddedMovement = _rb.velocity;
@@ -80,6 +94,8 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         _prevPosition = transform.position;
+        _animator = spriteRendererTransform.GetComponent<Animator>();
+        _spriteRend = spriteRendererTransform.GetComponent<SpriteRenderer>();
         if (jumpApexTime <= 0) { Debug.LogError("jumpapextime can't be negative or 0"); }
         _gravity = (2 * jumpHeight) / (jumpApexTime * jumpApexTime);
         _initialJumpVelocity = (2 * jumpHeight) / jumpApexTime;
@@ -88,7 +104,7 @@ public class PlayerMovement : MonoBehaviour
         InputSystem.current.actions.Player.Jump.performed += ctx => { _jumpPressInput = true; _jumpHoldInput = true; };
         InputSystem.current.actions.Player.Jump.canceled += ctx => { _jumpHoldInput = false; };
     }
-    private void LateUpdate()
+    private void Update()
     {
         spriteRendererTransform.position = Vector3.Lerp(_prevPosition, transform.position, (Time.time - lastFixedUpdateTime) / 0.02f);
     }
@@ -97,6 +113,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 velocity = Vector2.zero;
         _prevPosition = transform.position;
+        Vector2 prevVel = _rb.velocity;
         if (!freezeMovement)
         {
             velocity = _rb.velocity + freezeAddedMovement;
@@ -110,6 +127,26 @@ public class PlayerMovement : MonoBehaviour
         //since it is a press input, once we process it we dont need it
         _jumpPressInput = false;
         lastFixedUpdateTime = Time.time;
+        ApplyAnimations();
+
+        void ApplyAnimations()
+        {
+            int currentAnim = turnAnim;
+
+            if ( (_movementInput > 0 || _movementInput < 0) &&!freezeMovement) { _lookingRight = _movementInput > 0; currentAnim = walkAnim; }
+            if (_jumping)
+            { 
+                currentAnim = jumpAnim; 
+                if (Physics2D.BoxCast(transform.position, new Vector2(.8f, .1f), 0, Vector2.down, 1.5f, GROUNDLAYER | MOVINGPLATFORMLAYER)) { currentAnim = jumpEndAnim; } 
+            }
+            else if ((!Physics2D.BoxCast(transform.position, new Vector2(.8f, .1f), 0, Vector2.down, 1, GROUNDLAYER | MOVINGPLATFORMLAYER) && prevVel.y != 0))
+            {
+                currentAnim = jumpEndAnim;
+            }
+            if (freezeMovement) { currentAnim = turnAnim; }
+            _animator.Play(currentAnim);
+            _spriteRend.flipX = !_lookingRight;
+        }
 
         void ApplyXMovement()
         {
@@ -165,6 +202,8 @@ public class PlayerMovement : MonoBehaviour
                 _holdingJump = true;
                 _jumping = true;
                 _isJumpCut = false;
+
+                SoundManager.current.PlaySFXWithMusicMute(jumpAudios[Random.Range(0, jumpAudios.Count - 1)]);
             }
         }
     }

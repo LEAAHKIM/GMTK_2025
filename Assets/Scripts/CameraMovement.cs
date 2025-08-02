@@ -54,10 +54,14 @@ public class CameraMovement : MonoBehaviour
         cam = GetComponent<Camera>();
         current = this;
     }
-    public void OffsetCameraTargetPos(Vector2 offset)
+    // i know this is terrible but there is only 1 day left. i hope no one sees this
+    public void OffsetCameraTargetPos(Vector2 offset, bool actuallyOffset)
     {
-        _cameraTargetPos += offset;
-        _deadBoxPos += offset;
+        if (actuallyOffset)
+        {
+            _cameraTargetPos += offset;
+            _deadBoxPos += offset;
+        }
     }
     private void Start()
     {
@@ -69,6 +73,12 @@ public class CameraMovement : MonoBehaviour
         InputSystem.current.actions.Player.Look.performed += ctx => { mousePos = ctx.ReadValue<Vector2>(); mouseWorldPos = cam.ScreenToWorldPoint(mousePos); };
         levelExtents = LevelManager.current.currentLevelExtents * 3;
     }
+    public void SetCameraSize(float h)
+    {
+        cam.orthographicSize = h;
+        _camExtentsY = cam.orthographicSize;
+        _camExtentsX = _camExtentsY * cam.aspect;
+    }
     float SignWith0(float v)
     {
         if (v == 0) { return 0; }
@@ -76,28 +86,33 @@ public class CameraMovement : MonoBehaviour
     }
     private void LateUpdate()
     {
-
-        Vector2 targetPos = (Vector2)target.position + offset;
+        Vector2 targetPos;
         float currentCameraSmoothY = cameraSmoothTimeYMax;
-
-        // this part is only called when camera is bound to player, so i access player only here.
-        if (applyLookahead)
+        float currentCameraSmoothX = cameraSmoothTimeX;
+        if (target != null)
         {
-            //inputx
-            if (SignWith0(_movementXInput) != SignWith0(_currentLookAheadProgress)) { _currentLookAheadProgress = 0; }
-            //it is fine if this is frame dependent, since it is camera
-            _currentLookAheadProgress = Mathf.Lerp(_currentLookAheadProgress, _movementXInput, Time.deltaTime * lookAheadProgressSpeed);
-            targetPos.x += lookAheadWeight * _currentLookAheadProgress;
+            targetPos = (Vector2)target.position + offset;
+            currentCameraSmoothY = cameraSmoothTimeYMax;
 
-            //mouse
-            Vector2 mouseOffset = (mouseWorldPos - (Vector2)target.transform.position).normalized;
-            targetPos += mouseOffset * mouseLookAheadWeight;
-            float t = -LevelManager.current.playerMovement._rb.velocity.y / 20;
-            currentCameraSmoothY = Mathf.Lerp(cameraSmoothTimeYMax, cameraSmoothTimeYMin, t);
-            targetPos.y -= Mathf.Lerp(0, cameraOffsetWhenFalling, t);
+            // this part is only called when camera is bound to player, so i access player only here.
+            if (applyLookahead)
+            {
+                //inputx
+                if (SignWith0(_movementXInput) != SignWith0(_currentLookAheadProgress)) { _currentLookAheadProgress = 0; }
+                //it is fine if this is frame dependent, since it is camera
+                _currentLookAheadProgress = Mathf.Lerp(_currentLookAheadProgress, _movementXInput, Time.deltaTime * lookAheadProgressSpeed);
+                targetPos.x += lookAheadWeight * _currentLookAheadProgress;
+
+                //mouse
+                Vector2 mouseOffset = (mouseWorldPos - (Vector2)target.transform.position).normalized;
+                targetPos += mouseOffset * mouseLookAheadWeight;
+                float t = -LevelManager.current.playerMovement._rb.velocity.y / 20;
+                currentCameraSmoothY = Mathf.Lerp(cameraSmoothTimeYMax, cameraSmoothTimeYMin, t);
+                targetPos.y -= Mathf.Lerp(0, cameraOffsetWhenFalling, t);
+            }
+            else { _currentLookAheadProgress = 0; }
         }
-        else { _currentLookAheadProgress = 0; }
-
+        else { targetPos = Vector2.zero; _cameraTargetPos = Vector2.zero; }
 
         //level bound checkin
         if ((targetPos.x - _camExtentsX) < (levelPosition.x - levelExtents.x)) { targetPos.x = levelPosition.x - levelExtents.x + _camExtentsX; }
@@ -120,7 +135,7 @@ public class CameraMovement : MonoBehaviour
 
 
         // camera movement with cool smoothness function
-        float smoothDampX = Mathf.SmoothDamp(transform.position.x, _cameraTargetPos.x, ref _currentCameraVelX, cameraSmoothTimeX, Mathf.Infinity, Time.deltaTime);
+        float smoothDampX = Mathf.SmoothDamp(transform.position.x, _cameraTargetPos.x, ref _currentCameraVelX, currentCameraSmoothX, Mathf.Infinity, Time.deltaTime);
         float smoothDampY = Mathf.SmoothDamp(transform.position.y, _cameraTargetPos.y, ref _currentCameraVelY, currentCameraSmoothY, Mathf.Infinity, Time.deltaTime);
         transform.position = new Vector3(smoothDampX, smoothDampY, transform.position.z);
         _lastTargetPos = targetPos;

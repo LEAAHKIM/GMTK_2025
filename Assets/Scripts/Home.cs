@@ -6,16 +6,20 @@ using UnityEngine.SceneManagement;
 public class Home : MonoBehaviour
 {
     public static string previousScene;
-
+    public List<AudioClip> onHoverClips;
+    public AudioClip onClickCredits;
+    public AudioClip onClickPlay;
     public void LoadLevelsScene()
     {
         previousScene = SceneManager.GetActiveScene().name;
+        SoundManager.current.SFXPlayer.PlayOneShot(onClickCredits);
         SceneManager.LoadScene("Levels");
     }
 
     public void LoadCreditsScene()
     {
         previousScene = SceneManager.GetActiveScene().name;
+        SoundManager.current.SFXPlayer.PlayOneShot(onClickCredits);
         SceneManager.LoadScene("Credits");
     }
 
@@ -23,6 +27,7 @@ public class Home : MonoBehaviour
     {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         int nextSceneIndex = currentSceneIndex + 1;
+        SoundManager.current.SFXPlayer.PlayOneShot(onClickPlay);
 
         if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
         {
@@ -33,11 +38,15 @@ public class Home : MonoBehaviour
             Debug.Log("No more levels to load.");
         }
     }
-
+    public void OnHover()
+    {
+        SoundManager.current.SFXPlayer.PlayOneShot(onHoverClips[Random.Range(0, onHoverClips.Count - 1)]);
+    }
     public void GoBack()
     {
         if (!string.IsNullOrEmpty(previousScene))
         {
+            SoundManager.current.SFXPlayer.PlayOneShot(onClickCredits);
             SceneManager.LoadScene(previousScene);
         }
         else
