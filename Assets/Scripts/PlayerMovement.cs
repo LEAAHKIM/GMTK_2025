@@ -39,9 +39,10 @@ public class PlayerMovement : MonoBehaviour
     public float jumpHeight = 2;
     public float jumpApexTime = 1;
 
+
     // if not holding space, multiply gravity with this;
     //public float stopJumpGravityMultiplier = 2;
-
+    private SpriteRenderer[] _ghosts;
 
     // to make sure gravity doesnt make player lose control. if y velocity is < -this, we set it equal to this.
     public float maxFallVelocity = 30;
@@ -103,10 +104,32 @@ public class PlayerMovement : MonoBehaviour
         InputSystem.current.actions.Player.Move.canceled += ctx => { _movementInput = 0; };
         InputSystem.current.actions.Player.Jump.performed += ctx => { _jumpPressInput = true; _jumpHoldInput = true; };
         InputSystem.current.actions.Player.Jump.canceled += ctx => { _jumpHoldInput = false; };
+        _ghosts = new SpriteRenderer[8];
+        for (int i = 0; i < 8; i++)
+        {
+            GameObject b = new GameObject();
+            _ghosts[i] = b.AddComponent<SpriteRenderer>();
+            _ghosts[i].sprite = _spriteRend.sprite;
+        }
     }
     private void Update()
     {
-        spriteRendererTransform.position = Vector3.Lerp(_prevPosition, transform.position, (Time.time - lastFixedUpdateTime) / 0.02f);
+        Vector3 pos = Vector3.Lerp(_prevPosition, transform.position, (Time.time - lastFixedUpdateTime) / 0.02f);
+        spriteRendererTransform.position = pos;
+        int idx = 0;
+        for (int i = -1; i <= 1; i++)
+        {
+            for (int j = -1; j <= 1; j++)
+            {
+                if (i == 0 && j == 0) { continue; }
+                Vector3 offset = new Vector3(LevelManager.current.currentLevelExtents.x *2* i, LevelManager.current.currentLevelExtents.y *2* j, 0);
+                _ghosts[idx].transform.position = pos + offset;
+                _ghosts[idx].sprite = _spriteRend.sprite;
+                _ghosts[idx].flipX = _spriteRend.flipX;
+                idx++;
+            }
+        }
+
     }
 
     private void FixedUpdate()
