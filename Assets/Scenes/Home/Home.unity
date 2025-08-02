@@ -423,6 +423,7 @@ GameObject:
   - component: {fileID: 372293009}
   - component: {fileID: 372293008}
   - component: {fileID: 372293011}
+  - component: {fileID: 372293012}
   m_Layer: 5
   m_Name: Play Button
   m_TagString: Untagged
@@ -439,7 +440,7 @@ RectTransform:
   m_GameObject: {fileID: 372293006}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 6, y: 6, z: 6}
+  m_LocalScale: {x: 9, y: 9, z: 6}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2128398762}
@@ -494,14 +495,14 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 800651160}
-        m_TargetAssemblyTypeName: Home, Assembly-CSharp
-        m_MethodName: LoadLevelsScene
-        m_Mode: 1
+      - m_Target: {fileID: 372293012}
+        m_TargetAssemblyTypeName: LoadLevel, Assembly-CSharp
+        m_MethodName: LoadScene
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -526,7 +527,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3e51a94f4dfd648ac9f15d01aee136d6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 219bf8c0273424cfb9b2f4fb9180dae5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -573,6 +574,18 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &372293012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 372293006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: effd9c6d041c74618943e617390ededb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -817,7 +830,7 @@ RectTransform:
   m_GameObject: {fileID: 934376672}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 6, y: 6, z: 6}
+  m_LocalScale: {x: 9, y: 9, z: 6}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 144595347}
@@ -904,7 +917,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 05afa3d7480834d16a81132e8a388cc3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7c2c2c8cb6083439caba9071687bc661, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
