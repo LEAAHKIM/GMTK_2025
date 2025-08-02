@@ -12,6 +12,8 @@ public class SoundManager : MonoBehaviour
     public static float lastCharacterTalkTime = -1;
     public AudioSource SFXPlayer;
     public AudioSource musicPlayer;
+    public AudioClip levelTrack;
+    public AudioClip mainTrack;
     public float _lastSFXTime;
     public float _lastSFXLength;
     public AnimationCurve musicDecreaseWhenSFXCurve;
@@ -57,20 +59,27 @@ public class SoundManager : MonoBehaviour
         current.musicPlayer.volume = v;
     }
     
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+{
+    if (scene.name == "Home")
     {
-        if (scene.name == "Home")
+        if (musicPlayer.clip != mainTrack)
         {
-            musicPlayer.Stop(); 
-        }
-        else
-        {
+            musicPlayer.clip = mainTrack;
             musicPlayer.volume = musicVolume;
-            if (!musicPlayer.isPlaying)
-            {
-                musicPlayer.Play();
-            }
+            musicPlayer.Play();
         }
     }
+    else
+    {
+        if (musicPlayer.clip != levelTrack)
+        {
+            musicPlayer.clip = levelTrack;
+            musicPlayer.volume = musicVolume;
+            musicPlayer.Play();
+        }
+    }
+}
+
 
 }

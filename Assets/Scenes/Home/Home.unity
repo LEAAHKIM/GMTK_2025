@@ -1313,6 +1313,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6692854625603996340, guid: bc8b131c15c06bc4f819f171ae9b6b46, type: 3}
+      propertyPath: mainTrack
+      value: 
+      objectReference: {fileID: 8300000, guid: e4b597b7bfe3949189b6947bc0a66cfb, type: 3}
+    - target: {fileID: 6692854625603996340, guid: bc8b131c15c06bc4f819f171ae9b6b46, type: 3}
+      propertyPath: levelTrack
+      value: 
+      objectReference: {fileID: 8300000, guid: a4dc3cfe5ff3ea44087cf91be2d0375e, type: 3}
     - target: {fileID: 8797573197928299561, guid: bc8b131c15c06bc4f819f171ae9b6b46, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
