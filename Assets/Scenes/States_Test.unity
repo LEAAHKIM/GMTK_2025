@@ -141,7 +141,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &406954724
 Transform:
   m_ObjectHideFlags: 0
@@ -522,7 +522,9 @@ MonoBehaviour:
   target: {fileID: 521532099}
   offset: {x: 0, y: 1.5}
   cameraSmoothTimeX: 0.12
-  cameraSmoothTimeY: 0.14
+  cameraSmoothTimeYMax: 0
+  cameraSmoothTimeYMin: 0
+  cameraOffsetWhenFalling: 2
   deadBoxExtents: {x: 1.5, y: 1.2}
   levelExtents: {x: 15, y: 9}
   levelPosition: {x: 0, y: 3}
@@ -651,6 +653,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e49a4d7bc1ed2348abcfe3fa9f5fb7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rb: {fileID: 0}
   maxSpeed: 10
   accelerationTime: 0.06
   friction: 75
@@ -664,6 +667,9 @@ MonoBehaviour:
   jumpApexGravityMult: 0.5
   jumpApexWhenAbsVelYIsSmallerThan: 0.4
   jumpBreakVelYMult: 0.5
+  freezeMovement: 0
+  _prevPosition: {x: 0, y: 0}
+  spriteRendererTransform: {fileID: 0}
 --- !u!212 &521532104
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -731,6 +737,7 @@ MonoBehaviour:
   _liquidSprite: {fileID: 21300000, guid: fc06a805f9caa470f91ebc48f0597e64, type: 3}
   _solidSprite: {fileID: 21300000, guid: 836985a462a7f4d4d8a368d12687b341, type: 3}
   _gasSprite: {fileID: 21300000, guid: b066b4505ae8d4022855781cff5516fb, type: 3}
+  _cloudSprite: {fileID: 0}
 --- !u!114 &521532106
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -743,8 +750,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f461000b6f4a417d84365d24d023db2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waterBar: {fileID: 1100651535}
-  waterAmount: 0.3
+  _waterBar: {fileID: 0}
+  _waterAmount: 0.5
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -791,7 +798,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &726118015
 Transform:
   m_ObjectHideFlags: 0
