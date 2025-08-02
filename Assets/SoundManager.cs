@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager current;
-    
-    public static float SFXVolume=1.0f;
-    public static float musicVolume=0.5f;
+
+    public static float SFXVolume = 1.0f;
+    public static float musicVolume = 0.5f;
     public static float lastCharacterTalkTime = -1;
     public AudioSource SFXPlayer;
     public AudioSource musicPlayer;
@@ -19,9 +20,15 @@ public class SoundManager : MonoBehaviour
         if (current == null)
         {
             current = this;
+            DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
-        else { Destroy(gameObject); }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
+
     private void Start()
     {
         SFXPlayer.volume = SFXVolume;
@@ -30,7 +37,7 @@ public class SoundManager : MonoBehaviour
     }
     private void Update()
     {
-        musicPlayer.volume = Mathf.Lerp(musicVolume / 1.5f, musicVolume, musicDecreaseWhenSFXCurve.Evaluate(Mathf.Clamp01( (Time.time - _lastSFXTime)/_lastSFXLength) ) );
+        musicPlayer.volume = Mathf.Lerp(musicVolume / 1.5f, musicVolume, musicDecreaseWhenSFXCurve.Evaluate(Mathf.Clamp01((Time.time - _lastSFXTime) / _lastSFXLength)));
     }
     public void PlaySFXWithMusicMute(AudioClip sfx)
     {
@@ -49,4 +56,21 @@ public class SoundManager : MonoBehaviour
         musicVolume = v;
         current.musicPlayer.volume = v;
     }
+    
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Home")
+        {
+            musicPlayer.Stop(); 
+        }
+        else
+        {
+            musicPlayer.volume = musicVolume;
+            if (!musicPlayer.isPlaying)
+            {
+                musicPlayer.Play();
+            }
+        }
+    }
+
 }
