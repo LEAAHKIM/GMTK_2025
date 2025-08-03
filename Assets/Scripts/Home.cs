@@ -8,6 +8,34 @@ public class Home : MonoBehaviour
     public List<AudioClip> onHoverClips;
     public AudioClip onClickCredits;
     public AudioClip onClickPlay;
+    public GameObject menuButton;
+    public GameObject menuPanel;
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void PauseGame()
+    {
+        Debug.Log("PauseGame called");
+        SoundManager.current.SFXPlayer.PlayOneShot(onClickCredits);
+        Time.timeScale = 0f;
+        menuPanel.SetActive(true);
+    }
+
+    public void ResumeGame()
+    {
+        SoundManager.current.SFXPlayer.PlayOneShot(onClickCredits);
+        Time.timeScale = 1f;
+        menuPanel.SetActive(false);
+        menuButton.SetActive(true);
+    }
+    public void LoadHome()
+    {
+        SoundManager.current.SFXPlayer.PlayOneShot(onClickCredits);
+        SceneManager.LoadScene("Home");
+    }
+
     public void LoadLevelsScene()
     {
         previousScene = SceneManager.GetActiveScene().name;
