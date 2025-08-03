@@ -58,7 +58,7 @@ public class WaterManager : MonoBehaviour
         {
             StopCoroutine(_fillAnimCoroutine);
         }
-        _fillAnimCoroutine = StartCoroutine(AnimateFillAmount(targetFill));
+        _fillAnimCoroutine = StartCoroutine(AnimateFillAmount(targetFill)); 
     }
 
     private IEnumerator AnimateFillAmount(float targetFill)

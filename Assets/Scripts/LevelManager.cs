@@ -10,11 +10,13 @@ public class LevelManager : MonoBehaviour
     public enum GameState
     {
         PlayerControl = 0,
-        MovingPlatform = 1
+        MovingPlatform = 1,
+        EndLevel = 2,
+        StartLevel = 3
     }
     public float collectibleAmount = 0;
 
-    public GameState currentGameState = GameState.PlayerControl;
+    public GameState currentGameState = GameState.StartLevel;
     public Vector2 currentLevelExtents;
 
     public PlayerMovement playerMovement;
@@ -40,28 +42,8 @@ public class LevelManager : MonoBehaviour
     {
         current = this;
         _playerTransform = playerMovement.transform;
+        collectibleAmount = 0;
     }
-
-    private void OnEnable()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    private void OnDisable()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
-
-    public bool _isLoading = false;
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        _isLoading = false;
-        Debug.Log(">>> OnSceneLoaded called");
-        collectibleAmount = FindObjectsOfType<Collectible>().Length;
-        Debug.Log($"Scene loaded: {scene.name}, collectibles found: {collectibleAmount}");
-    }
-
 
     private void Start()
     {
@@ -79,6 +61,8 @@ public class LevelManager : MonoBehaviour
         float width = currentLevelExtents.y * cameraMovement.cam.aspect;
         if (width > currentLevelExtents.x) { cameraZoomOutSize = currentLevelExtents.y; }
         else { cameraZoomOutSize = currentLevelExtents.x * (1.0f / cameraMovement.cam.aspect); }
+
+        StartLevel();
     }
     public void LoadNextLevel()
     {
@@ -130,15 +114,48 @@ public class LevelManager : MonoBehaviour
             case GameState.MovingPlatform:
                 MovePlatform();
                 break;
+            case GameState.EndLevel:
+                EndLevel();
+                break;
+            case GameState.StartLevel:
+                StartLevel();
+                break;
             default:
                 break;
         }
+        void StartLevel()
+        {
+            cameraMovement.target = playerMovement.spriteRendererTransform;
+            cameraMovement.applyLookahead = false;
+            cameraMovement.dontapplycamerabox = true;
+            cameraMovement.dontapplyoffset = true;
+            if (Time.time-startLevelTime>.8f)
+            {
+                currentGameState = GameState.PlayerControl;
+                playerMovement.enabled = true;
+                playerMovement.UnFreezePlayerMovement();
+                cameraMovement.dontapplycamerabox = false;
+                cameraMovement.dontapplyoffset = false;
+                cameraMovement.applyLookahead = true;
 
+            }
+        }
         void MovePlatform()
         {
             if (currentPlatformIndex < 2) { return; }
             _currentMovingPlatform.spriteTransform.position = Vector2.Lerp(_currentMovingPlatform._positions[currentPlatformIndex - 2], _currentMovingPlatform._positions[currentPlatformIndex - 1], (Time.time - _lastFUpdateTime) / 0.02f);
-
+        }
+        void EndLevel()
+        {
+            cameraMovement.target = playerMovement.spriteRendererTransform;
+            cameraMovement.SetCameraSize(Mathf.Lerp(cameraMovement.cam.orthographicSize, 2.0f, Time.deltaTime * cameraZoomOutSpeed));
+            cameraMovement.applyLookahead = false;
+            cameraMovement.dontapplycamerabox = true;
+            cameraMovement.dontapplyoffset = true;
+            if(Time.time-endLevelTime>1.4f)
+            {
+                LoadNextLevel();
+            }
         }
         void PlayerControl()
         {
@@ -199,9 +216,28 @@ public class LevelManager : MonoBehaviour
             currentPlatformIndex++;
             if (currentPlatformIndex >= currentPlatformSize) { StopMovingPlatform(); }
             _lastFUpdateTime = Time.time;
-
         }
-
+    }
+    public float endLevelTime = -1;
+    public float startLevelTime = -1;
+    void EndLevel()
+    {
+        currentGameState = GameState.EndLevel;
+        playerMovement.FreezePlayerMovement();
+        playerMovement._animator.Play(PlayerMovement.turnIntoPlayerAnim);
+        playerMovement.enabled = false;
+        endLevelTime = Time.time;
+        BlackScreenAppear.current.SetBlackScreen(true, .6f);
+    }
+    void StartLevel()
+    {
+        currentGameState = GameState.StartLevel;
+        playerMovement.FreezePlayerMovement();
+        playerMovement._animator.Play(PlayerMovement.turnIntoCloudAnim);
+        playerMovement.enabled = false;
+        startLevelTime = Time.time;
+        BlackScreenAppear.current.SetBlackScreen(false);
+        cameraMovement.SetCameraSize(2);
     }
     private void OnDrawGizmos()
     {
@@ -213,9 +249,10 @@ public class LevelManager : MonoBehaviour
         collectibleAmount--;
         if (collectibleAmount <= 0)
         {
+            EndLevel();
             // Advance to next level or trigger win condition
-            Debug.Log("All collectibles found!");
-            LoadNextLevel();
+            //Debug.Log("All collectibles found!");
+            //LoadNextLevel();
         }
     }
 }

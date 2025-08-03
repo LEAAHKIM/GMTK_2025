@@ -44,12 +44,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6bd4944cc552754a8093439eb7bd10f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collectibleAmount: 0
   currentGameState: 0
   currentLevelExtents: {x: 11, y: 8}
   playerMovement: {fileID: 0}
   cameraMovement: {fileID: 0}
   zoomOutInput: 0
-  timeLeftGameObject: {fileID: 0}
-  timeLeftText: {fileID: 0}
-  cameraZoomOutSpeed: 26
+  cameraZoomOutSpeed: 5
   cameraZoomOutSize: 0
+  goDownInput: 0
+  endLevelTime: -1
+  startLevelTime: -1

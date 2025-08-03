@@ -13,6 +13,7 @@ public class Home : MonoBehaviour
     
     public void RestartGame()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
@@ -33,12 +34,15 @@ public class Home : MonoBehaviour
     }
     public void LoadHome()
     {
+        Time.timeScale = 1f;
+
         SoundManager.current.SFXPlayer.PlayOneShot(onClickCredits);
         SceneManager.LoadScene("Home");
     }
 
     public void LoadLevelsScene()
     {
+        Time.timeScale = 1f;
         previousScene = SceneManager.GetActiveScene().name;
         SoundManager.current.SFXPlayer.PlayOneShot(onClickCredits);
         SceneManager.LoadScene("Levels");
@@ -46,6 +50,7 @@ public class Home : MonoBehaviour
 
     public void LoadCreditsScene()
     {
+        Time.timeScale = 1f;
         previousScene = SceneManager.GetActiveScene().name;
         SoundManager.current.SFXPlayer.PlayOneShot(onClickCredits);
         SceneManager.LoadScene("Credits");
@@ -59,6 +64,7 @@ public class Home : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(previousScene))
         {
+            Time.timeScale = 1f;
             SoundManager.current.SFXPlayer.PlayOneShot(onClickCredits);
             SceneManager.LoadScene(previousScene);
         }

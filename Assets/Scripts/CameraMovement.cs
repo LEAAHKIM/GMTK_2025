@@ -15,6 +15,7 @@ public class CameraMovement : MonoBehaviour
     [Header("Camera follow")]
     public Transform target;
     public Vector2 offset;
+    public bool dontapplyoffset = false;
     public float cameraSmoothTimeX;
     public float cameraSmoothTimeYMax;
     public float cameraSmoothTimeYMin;
@@ -57,7 +58,7 @@ public class CameraMovement : MonoBehaviour
     public Sprite bgSprite;
     private float cameraStartSize;
     private float _cameraCurrentSize;
-
+    public bool dontapplycamerabox = false;
     private InputAction moveAction;
     private InputAction lookAction;
 
@@ -165,12 +166,13 @@ public class CameraMovement : MonoBehaviour
     }
     private void LateUpdate()
     {
+        Vector2 currentOffset = dontapplyoffset ? Vector2.zero : offset;
         Vector2 targetPos;
         float currentCameraSmoothY = cameraSmoothTimeYMax;
         float currentCameraSmoothX = cameraSmoothTimeX;
         if (target != null)
         {
-            targetPos = (Vector2)target.position + offset;
+            targetPos = (Vector2)target.position + currentOffset;
             currentCameraSmoothY = cameraSmoothTimeYMax;
 
             // this part is only called when camera is bound to player, so i access player only here.
@@ -211,7 +213,7 @@ public class CameraMovement : MonoBehaviour
         if (outofboundsX) { _cameraTargetPos.x = targetPos.x; }
         if (outofboundsY) { _cameraTargetPos.y = targetPos.y; }
 
-
+        if (dontapplycamerabox) { _cameraTargetPos = targetPos; }
 
         // camera movement with cool smoothness function
         float smoothDampX = Mathf.SmoothDamp(transform.position.x, _cameraTargetPos.x, ref _currentCameraVelX, currentCameraSmoothX, Mathf.Infinity, Time.deltaTime);

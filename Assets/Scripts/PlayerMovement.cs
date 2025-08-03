@@ -57,16 +57,16 @@ public class PlayerMovement : MonoBehaviour
     private float _gravity;
     private float _initialJumpVelocity;
 
-    private Animator _animator;
+    public Animator _animator;
     private SpriteRenderer _spriteRend;
     private bool _lookingRight;
-    private static int walkAnim = Animator.StringToHash("Walk");
-    private static int turnIntoCloudAnim = Animator.StringToHash("TurnIntoCloud");
-    private static int turnIntoPlayerAnim = Animator.StringToHash("TurnIntoPlayer");
-    private static int turnAnim = Animator.StringToHash("Turn");
-    private static int jumpAnim = Animator.StringToHash("Jump");
-    private static int jumpEndAnim = Animator.StringToHash("JumpEnd");
-    private static int chibiPoseAnim = Animator.StringToHash("ChibiPose");
+    public static int walkAnim = Animator.StringToHash("Walk");
+    public static int turnIntoCloudAnim = Animator.StringToHash("TurnIntoCloud");
+    public static int turnIntoPlayerAnim = Animator.StringToHash("TurnIntoPlayer");
+    public static int turnAnim = Animator.StringToHash("Turn");
+    public static int jumpAnim = Animator.StringToHash("Jump");
+    public static int jumpEndAnim = Animator.StringToHash("JumpEnd");
+    public static int chibiPoseAnim = Animator.StringToHash("ChibiPose");
 
     public bool freezeMovement = false;
     private Vector2 freezeAddedMovement = Vector2.zero;
@@ -95,6 +95,8 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _animator = spriteRendererTransform.GetComponent<Animator>();
+        _spriteRend = spriteRendererTransform.GetComponent<SpriteRenderer>();
     }
     private void OnEnable()
     {
@@ -156,8 +158,6 @@ private void OnJumpPerformed(InputAction.CallbackContext ctx)
     private void Start()
     {
         _prevPosition = transform.position;
-        _animator = spriteRendererTransform.GetComponent<Animator>();
-        _spriteRend = spriteRendererTransform.GetComponent<SpriteRenderer>();
         if (jumpApexTime <= 0) { Debug.LogError("jumpapextime can't be negative or 0"); }
         _gravity = (2 * jumpHeight) / (jumpApexTime * jumpApexTime);
         _initialJumpVelocity = (2 * jumpHeight) / jumpApexTime;

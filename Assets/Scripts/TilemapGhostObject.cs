@@ -5,6 +5,8 @@ using UnityEngine.Tilemaps;
 
 public class TilemapGhostObject : MonoBehaviour
 {
+    public Tilemap collisionTilemap;
+    public TileBase collisionTile;
     Tilemap tilemap;
     //TilemapRenderer renderer;
 
@@ -23,7 +25,14 @@ public class TilemapGhostObject : MonoBehaviour
 
         BoundsInt bounds = new BoundsInt(tilemap.origin, levelSize) ; // new BoundsInt(Vector3Int.zero, new Vector3Int( levelSize.x, levelSize.y, 1));
         TileBase[] a = tilemap.GetTilesBlock(bounds);
+        TileBase[] b = tilemap.GetTilesBlock(bounds);
 
+        for (int i = 0; i < b.Length; i++)
+        {
+            if (b[i] != null) { b[i] = collisionTile; }
+        }
+        collisionTilemap.transform.position = transform.position;
+        collisionTilemap.SetTilesBlock(bounds, b);
         for (int i = -1; i <= 1; i++)
         {
             for (int j = -1; j <= 1; j++)

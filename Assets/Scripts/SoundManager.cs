@@ -59,27 +59,28 @@ public class SoundManager : MonoBehaviour
         musicVolume = v;
         current.musicPlayer.volume = v;
     }
-    
-private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-{
-    if (sceneNames.Contains(scene.name))
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (musicPlayer.clip != mainTrack)
+        if (current != this) { return; }
+        if (sceneNames.Contains(scene.name))
         {
-            musicPlayer.clip = mainTrack;
-            musicPlayer.volume = musicVolume;
-            musicPlayer.Play();
+            if (musicPlayer.clip != mainTrack)
+            {
+                musicPlayer.clip = mainTrack;
+                musicPlayer.volume = musicVolume;
+                musicPlayer.Play();
+            }
+        }
+        else
+        {
+            if (musicPlayer.clip != levelTrack)
+            {
+                musicPlayer.clip = levelTrack;
+                musicPlayer.volume = musicVolume;
+                musicPlayer.Play();
+            }
         }
     }
-    else
-    {
-        if (musicPlayer.clip != levelTrack)
-        {
-            musicPlayer.clip = levelTrack;
-            musicPlayer.volume = musicVolume;
-            musicPlayer.Play();
-        }
-    }
-}
 
 }
