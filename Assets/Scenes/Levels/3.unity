@@ -260,11 +260,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 364214415}
   m_CullTransparentMesh: 1
---- !u!1 &370075536 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1441844221846935747, guid: 9b575f08486691448abe7d80fdec40b0, type: 3}
-  m_PrefabInstance: {fileID: 2705469052053250337}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &537981927
 GameObject:
   m_ObjectHideFlags: 0
@@ -557,17 +552,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 619587573}
   m_CullTransparentMesh: 1
---- !u!114 &727711735 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 540786689545718341, guid: 9b575f08486691448abe7d80fdec40b0, type: 3}
-  m_PrefabInstance: {fileID: 2705469052053250337}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &791793109
 GameObject:
   m_ObjectHideFlags: 0
@@ -4216,7 +4200,8 @@ PrefabInstance:
       value: Canvas
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1441844221846935747, guid: 9b575f08486691448abe7d80fdec40b0, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2377135398822563419, guid: 9b575f08486691448abe7d80fdec40b0, type: 3}
       insertIndex: -1
@@ -4242,7 +4227,7 @@ PrefabInstance:
     - target: {fileID: 1330316551310224893, guid: aa4884c8fea49144eba6a2b98a5c4e38, type: 3}
       propertyPath: timeLeftText
       value: 
-      objectReference: {fileID: 727711735}
+      objectReference: {fileID: 0}
     - target: {fileID: 1330316551310224893, guid: aa4884c8fea49144eba6a2b98a5c4e38, type: 3}
       propertyPath: cameraMovement
       value: 
@@ -4254,7 +4239,7 @@ PrefabInstance:
     - target: {fileID: 1330316551310224893, guid: aa4884c8fea49144eba6a2b98a5c4e38, type: 3}
       propertyPath: timeLeftGameObject
       value: 
-      objectReference: {fileID: 370075536}
+      objectReference: {fileID: 0}
     - target: {fileID: 4715376966468501114, guid: aa4884c8fea49144eba6a2b98a5c4e38, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

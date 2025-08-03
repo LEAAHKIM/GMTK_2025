@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager current;
+    private List<string> sceneNames = new List<string> { "Home", "Levels", "Credits" };
 
     public static float SFXVolume = 1.0f;
     public static float musicVolume = 0.5f;
@@ -61,7 +62,7 @@ public class SoundManager : MonoBehaviour
     
 private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
 {
-    if (scene.name == "Home")
+    if (sceneNames.Contains(scene.name))
     {
         if (musicPlayer.clip != mainTrack)
         {
