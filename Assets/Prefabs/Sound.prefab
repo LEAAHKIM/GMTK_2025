@@ -229,6 +229,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  nilaSong: {fileID: 8300000, guid: e4b597b7bfe3949189b6947bc0a66cfb, type: 3}
+  creditsSong: {fileID: 8300000, guid: effec05a12faccb46a8fceb9ebb798c1, type: 3}
 --- !u!1 &6601750808472917440
 GameObject:
   m_ObjectHideFlags: 0

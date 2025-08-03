@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 9141175395696959657}
   - component: {fileID: 4036948106467624273}
   - component: {fileID: 2854728364005044128}
+  - component: {fileID: 5501578142123080432}
   m_Layer: 7
   m_Name: movingplatform
   m_TagString: Untagged
@@ -127,10 +128,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   platformMoveSpeed: 8
-  platformMoveTime: 1.5
+  platformMoveTime: 1
   _positions: []
   spriteTransform: {fileID: 2966778730370173603}
   isGhostPlatform: 0
+--- !u!114 &5501578142123080432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3356984314497484009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ed22ebaa2b0c7a4a97898df97573139, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8807103931049526919
 GameObject:
   m_ObjectHideFlags: 0
@@ -204,7 +217,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 289958527a271f54da8978e555520f22, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6e3d9e50c8fe0424488c9bb24327b057, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

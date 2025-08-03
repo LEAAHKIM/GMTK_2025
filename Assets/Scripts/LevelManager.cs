@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager current;
+    public static bool gameStarted = false;
     public enum GameState
     {
         PlayerControl = 0,
@@ -33,11 +34,12 @@ public class LevelManager : MonoBehaviour
 
 
     public bool zoomOutInput;
-
+    public GameObject fakePlatform;
     private float _cameraStartSize;
     public float cameraZoomOutSpeed;
     public float cameraZoomOutSize;
     public bool goDownInput;
+    public List<AudioClip> startLevelAudio;
     private void Awake()
     {
         current = this;
@@ -61,7 +63,7 @@ public class LevelManager : MonoBehaviour
         float width = currentLevelExtents.y * cameraMovement.cam.aspect;
         if (width > currentLevelExtents.x) { cameraZoomOutSize = currentLevelExtents.y; }
         else { cameraZoomOutSize = currentLevelExtents.x * (1.0f / cameraMovement.cam.aspect); }
-
+        fakePlatform.SetActive(false);
         StartLevel();
     }
     public void LoadNextLevel()
@@ -87,9 +89,11 @@ public class LevelManager : MonoBehaviour
         currentPlatformSize = (int)(p.platformMoveTime * 50.0f);
         p.InitializePositions(currentPlatformSize);
         cameraMovement.applyLookahead = false;
-        cameraMovement.target = p.spriteTransform;
+        cameraMovement.target = fakePlatform.transform;
         playerMovement.FreezePlayerMovement();
         p.HideGhostPlaftorms();
+        fakePlatform.SetActive(true);
+        fakePlatform.transform.position = _currentMovingPlatform.transform.position;
     }
     public void StopMovingPlatform()
     {
@@ -103,6 +107,7 @@ public class LevelManager : MonoBehaviour
         cameraMovement.target = playerMovement.spriteRendererTransform;
         cameraMovement.applyLookahead = true;
         playerMovement.UnFreezePlayerMovement();
+        fakePlatform.SetActive(false);
     }
     private void Update()
     {
@@ -143,7 +148,7 @@ public class LevelManager : MonoBehaviour
         void MovePlatform()
         {
             if (currentPlatformIndex < 2) { return; }
-            _currentMovingPlatform.spriteTransform.position = Vector2.Lerp(_currentMovingPlatform._positions[currentPlatformIndex - 2], _currentMovingPlatform._positions[currentPlatformIndex - 1], (Time.time - _lastFUpdateTime) / 0.02f);
+            fakePlatform.transform.position = Vector2.Lerp(_currentMovingPlatform._positions[currentPlatformIndex - 2], _currentMovingPlatform._positions[currentPlatformIndex - 1], (Time.time - _lastFUpdateTime) / 0.02f);
         }
         void EndLevel()
         {
@@ -206,12 +211,12 @@ public class LevelManager : MonoBehaviour
             Vector2 dir;
             if (moveMovingPlatformInput.magnitude > 0) { dir = moveMovingPlatformInput.normalized; }
             else { dir = Vector2.zero; return; }
-            Vector3 newPos = _currentMovingPlatform.transform.position + (Vector3)(dir * (_currentMovingPlatform.platformMoveSpeed * Time.fixedDeltaTime));
+            Vector3 newPos = fakePlatform.transform.position + (Vector3)(dir * (_currentMovingPlatform.platformMoveSpeed * Time.fixedDeltaTime));
             BoxCollider2D boxCol = _currentMovingPlatform.GetComponent<BoxCollider2D>();
             if (Physics2D.BoxCast(newPos + (Vector3)boxCol.offset, boxCol.size, 0, Vector2.zero, 0, PlayerMovement.GROUNDLAYER )) { return; }
 
-            _currentMovingPlatform.transform.position = newPos;
-            _currentMovingPlatformPos = _currentMovingPlatform.transform.position;
+            fakePlatform.transform.position = newPos;
+            _currentMovingPlatformPos = newPos;
             _currentMovingPlatform._positions[currentPlatformIndex] = _currentMovingPlatformPos;
             currentPlatformIndex++;
             if (currentPlatformIndex >= currentPlatformSize) { StopMovingPlatform(); }
@@ -231,6 +236,7 @@ public class LevelManager : MonoBehaviour
     }
     void StartLevel()
     {
+        SoundManager.current.PlaySFXWithMusicMute(startLevelAudio[Random.Range(0, startLevelAudio.Count)]);
         currentGameState = GameState.StartLevel;
         playerMovement.FreezePlayerMovement();
         playerMovement._animator.Play(PlayerMovement.turnIntoCloudAnim);

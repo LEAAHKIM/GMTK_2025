@@ -77,7 +77,8 @@ public class PlayerMovement : MonoBehaviour
 
     private InputAction moveAction;
     private InputAction jumpAction;
-
+    float lastInputTime = -1;
+    public List<AudioClip> afkVoiceLines;
 
     //CHARACTER TALK STUFF
     public List<AudioClip> jumpAudios;  
@@ -168,6 +169,7 @@ private void OnJumpPerformed(InputAction.CallbackContext ctx)
             _ghosts[i] = b.AddComponent<SpriteRenderer>();
             _ghosts[i].sprite = _spriteRend.sprite;
         }
+        lastInputTime = Time.time;
     }
     private void Update()
     {
@@ -191,6 +193,12 @@ private void OnJumpPerformed(InputAction.CallbackContext ctx)
 
     private void FixedUpdate()
     {
+        if (_movementInput != 0 || _jumpHoldInput == true) { lastInputTime = Time.time; }
+        if(Time.time-lastInputTime>10)
+        {
+            SoundManager.current.PlaySFXWithMusicMute(afkVoiceLines[Random.Range(0, afkVoiceLines.Count - 1)]);
+            lastInputTime = Time.time;
+        }
         Vector2 velocity = Vector2.zero;
         _prevPosition = transform.position;
         Vector2 prevVel = _rb.velocity;

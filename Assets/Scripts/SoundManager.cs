@@ -1,42 +1,44 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager current;
-    private List<string> sceneNames = new List<string> { "Home", "Levels", "Credits" };
-
     public static float SFXVolume = 1.0f;
-    public static float musicVolume = 0.5f;
+    public static float musicVolume = 0.3f;
     public static float lastCharacterTalkTime = -1;
     public AudioSource SFXPlayer;
     public AudioSource musicPlayer;
-    public AudioClip levelTrack;
-    public AudioClip mainTrack;
     public float _lastSFXTime;
     public float _lastSFXLength;
     public AnimationCurve musicDecreaseWhenSFXCurve;
+    public AudioClip nilaSong;
+    public AudioClip creditsSong;
     private void Awake()
     {
         if (current == null)
         {
             current = this;
-            DontDestroyOnLoad(gameObject);
-            SceneManager.sceneLoaded += OnSceneLoaded;
-        }
-        else
-        {
-            Destroy(gameObject);
         }
     }
 
     private void Start()
     {
+        //Debug.Log(SceneManager.GetActiveScene().name);
+        if(SceneManager.GetActiveScene().name == "Credits" || SceneManager.GetActiveScene().name == "Home" || SceneManager.GetActiveScene().name == "Levels") { musicPlayer.clip = (LevelManager.gameStarted) ? creditsSong : nilaSong; }
+        if (current != this) {
+            if (current.musicPlayer.clip != musicPlayer.clip) { Debug.Log("a"); current.musicPlayer.clip = musicPlayer.clip; current.musicPlayer.Play(); }
+            Destroy(gameObject);
+            return; 
+        }
+        
         SFXPlayer.volume = SFXVolume;
         musicPlayer.volume = musicVolume;
-        //DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject);
+        musicPlayer.Play();
     }
     private void Update()
     {
@@ -58,29 +60,6 @@ public class SoundManager : MonoBehaviour
     {
         musicVolume = v;
         current.musicPlayer.volume = v;
-    }
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        if (current != this) { return; }
-        if (sceneNames.Contains(scene.name))
-        {
-            if (musicPlayer.clip != mainTrack)
-            {
-                musicPlayer.clip = mainTrack;
-                musicPlayer.volume = musicVolume;
-                musicPlayer.Play();
-            }
-        }
-        else
-        {
-            if (musicPlayer.clip != levelTrack)
-            {
-                musicPlayer.clip = levelTrack;
-                musicPlayer.volume = musicVolume;
-                musicPlayer.Play();
-            }
-        }
     }
 
 }

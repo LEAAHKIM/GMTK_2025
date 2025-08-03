@@ -155,7 +155,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 129
   m_Sprite: {fileID: 346354863, guid: 8636f542535d0c3499f64f433268dc14, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -253,9 +253,17 @@ MonoBehaviour:
   jumpApexGravityMult: 0.5
   jumpApexWhenAbsVelYIsSmallerThan: 0.4
   jumpBreakVelYMult: 0.5
+  _animator: {fileID: 0}
   freezeMovement: 0
   _prevPosition: {x: 0, y: 0}
   spriteRendererTransform: {fileID: 7058897675415269085}
+  afkVoiceLines:
+  - {fileID: 8300000, guid: f2ba4a094286f4742bd28ffed31ce215, type: 3}
+  - {fileID: 8300000, guid: 6d925a3cd23d4f641bede087d0d66815, type: 3}
+  - {fileID: 8300000, guid: a5e125d20ff451c4e9c9131b54e04bfc, type: 3}
+  - {fileID: 8300000, guid: 126a3e8d5e3131748a53f0004f65513c, type: 3}
+  - {fileID: 8300000, guid: 2856a870d7f306b4f9ec0aa1c60cea00, type: 3}
+  - {fileID: 8300000, guid: f4ce95873e1d2794189d5bf5a5e905fc, type: 3}
   jumpAudios:
   - {fileID: 8300000, guid: 562e59cc26cb46a4abd1db32022605d7, type: 3}
   - {fileID: 8300000, guid: 2ddf73d5d53643d4696133eaa68e2921, type: 3}

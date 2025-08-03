@@ -56,6 +56,7 @@ public class CameraMovement : MonoBehaviour
     public float parallaxMultY;
     public float bgSize;
     public Sprite bgSprite;
+    public GameObject[] bgs;
     private float cameraStartSize;
     private float _cameraCurrentSize;
     public bool dontapplycamerabox = false;
@@ -221,6 +222,7 @@ public class CameraMovement : MonoBehaviour
         transform.position = new Vector3(smoothDampX, smoothDampY, transform.position.z);
         _lastTargetPos = targetPos; 
         float scaleChange = _cameraCurrentSize / cameraStartSize;
+        
     }
 
     private void OnDrawGizmos()

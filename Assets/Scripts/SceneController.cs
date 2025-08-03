@@ -24,5 +24,6 @@ public class SceneController : MonoBehaviour
         yield return new WaitForSeconds(1);
         SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
         transitionAnim.SetTrigger("Start");
+
     }
 }

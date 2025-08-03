@@ -92,10 +92,15 @@ public class MovingPlatform : MonoBehaviour
     }
     public void StartMovement()
     {
-        _currentIndex = _positions.Length - 1;
-        _goingForward = false;
+        _currentIndex = 0;
+        _goingForward = true;
         movementStarted = true;
+        _prevPrevIndex =2;
+        _prevIndex = 1;
         PlayerInteractManager.current.RemoveInteractable(GetComponent<Interactable>().uid);
+        //layerMovement a = LevelManager.current.playerMovement;
+        //RaycastHit2D hit = Physics2D.BoxCast((Vector2)transform.position + a.ongroundBoxOffset, a.ongroundBoxSize, 0, Vector2.zero, 0, PlayerMovement.MOVINGPLATFORMLAYER);
+        //if (hit.)
     }
     private void Update()
     {

@@ -498,7 +498,7 @@ MonoBehaviour:
       - m_Target: {fileID: 372293012}
         m_TargetAssemblyTypeName: LoadLevel, Assembly-CSharp
         m_MethodName: LoadScene
-        m_Mode: 3
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1467,6 +1467,10 @@ PrefabInstance:
       propertyPath: levelTrack
       value: 
       objectReference: {fileID: 8300000, guid: a4dc3cfe5ff3ea44087cf91be2d0375e, type: 3}
+    - target: {fileID: 7953321364521145530, guid: bc8b131c15c06bc4f819f171ae9b6b46, type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: e4b597b7bfe3949189b6947bc0a66cfb, type: 3}
     - target: {fileID: 8797573197928299561, guid: bc8b131c15c06bc4f819f171ae9b6b46, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

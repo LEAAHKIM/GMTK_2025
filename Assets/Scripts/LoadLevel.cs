@@ -5,8 +5,21 @@ using UnityEngine.SceneManagement;
 
 public class LoadLevel : MonoBehaviour
 {
-    public void LoadScene(int level)
+    public void LoadScene()
     {
-        SceneManager.LoadScene(level);
+        if(LevelManager.gameStarted) 
+        {
+            SceneManager.LoadScene(12);
+        }
+        else
+        {
+            LevelManager.gameStarted = true;
+            SceneManager.LoadScene(1);
+        }
+    }
+
+    public void LoadSceneIndex(int i)
+    {
+        SceneManager.LoadScene(i);
     }
 }
