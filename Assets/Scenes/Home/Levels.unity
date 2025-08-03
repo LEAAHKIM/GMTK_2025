@@ -1678,6 +1678,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: af0816acffd67d34d966bb65348e70c8, type: 3}
   onClickCredits: {fileID: 8300000, guid: 45fc1f8a3831bfa4f883b5bcf84e9c7f, type: 3}
   onClickPlay: {fileID: 8300000, guid: e97c20de3e1dc9b42bb68a8d3b4f2da1, type: 3}
+  menuButton: {fileID: 0}
+  menuPanel: {fileID: 0}
 --- !u!1 &891583485
 GameObject:
   m_ObjectHideFlags: 0
@@ -1728,7 +1730,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.3764706}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.23921569}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
