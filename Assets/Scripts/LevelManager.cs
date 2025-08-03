@@ -41,7 +41,7 @@ public class LevelManager : MonoBehaviour
         current = this;
         _playerTransform = playerMovement.transform;
     }
-    
+
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -51,12 +51,12 @@ public class LevelManager : MonoBehaviour
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
-    
+
     public bool _isLoading = false;
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        _isLoading = false;  
+        _isLoading = false;
         collectibleAmount = FindObjectsOfType<Collectible>().Length;
         Debug.Log($"Scene loaded: {scene.name}, collectibles found: {collectibleAmount}");
     }
@@ -194,11 +194,21 @@ public class LevelManager : MonoBehaviour
             _lastFUpdateTime = Time.time;
 
         }
-        
+
     }
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(Vector3.zero, currentLevelExtents * 2);
+    }
+    public void CollectItem()
+    {
+        collectibleAmount--;
+        if (collectibleAmount <= 0)
+        {
+            // Advance to next level or trigger win condition
+            Debug.Log("All collectibles found!");
+            LoadNextLevel();
+        }
     }
 }
