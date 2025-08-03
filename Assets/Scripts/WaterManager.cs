@@ -97,23 +97,8 @@ public class WaterManager : MonoBehaviour
     {
         if (other.CompareTag("WaterSource"))
         {
-            LevelManager.current.collectibleAmount--;
-            Debug.Log("Collectible picked up! Remaining: " + LevelManager.current.collectibleAmount);
-
             IncreaseWater(0.2f); // Example amount to increase water
             Debug.Log("Water collected!");
-            if (LevelManager.current.collectibleAmount <= 0 && !LevelManager.current._isLoading)
-            {
-                LevelManager.current._isLoading = true;
-                Debug.Log("level end");
-                LevelManager.current.LoadNextLevel();
-            }
-            Destroy(gameObject);
-        }
-        else if (other.CompareTag("WaterDeplete"))
-        {
-            DecreaseWater(0.2f); // Example amount to decrease water
-            Debug.Log("Water drained!");
         }
     }
 

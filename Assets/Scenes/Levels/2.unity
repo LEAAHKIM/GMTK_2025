@@ -1229,7 +1229,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &352778994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2577,11 +2577,11 @@ PrefabInstance:
       objectReference: {fileID: 337653373}
     - target: {fileID: 1330316551310224893, guid: aa4884c8fea49144eba6a2b98a5c4e38, type: 3}
       propertyPath: currentLevelExtents.x
-      value: 13.5
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 1330316551310224893, guid: aa4884c8fea49144eba6a2b98a5c4e38, type: 3}
       propertyPath: currentLevelExtents.y
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4715376966468501114, guid: aa4884c8fea49144eba6a2b98a5c4e38, type: 3}
       propertyPath: m_LocalPosition.x
