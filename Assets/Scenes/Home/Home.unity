@@ -502,7 +502,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 3
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -847,6 +847,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: af0816acffd67d34d966bb65348e70c8, type: 3}
   onClickCredits: {fileID: 8300000, guid: 45fc1f8a3831bfa4f883b5bcf84e9c7f, type: 3}
   onClickPlay: {fileID: 8300000, guid: e97c20de3e1dc9b42bb68a8d3b4f2da1, type: 3}
+  menuButton: {fileID: 0}
+  menuPanel: {fileID: 0}
 --- !u!1 &908203481
 GameObject:
   m_ObjectHideFlags: 0

@@ -36,7 +36,7 @@ public class SoundManager : MonoBehaviour
     {
         SFXPlayer.volume = SFXVolume;
         musicPlayer.volume = musicVolume;
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
     }
     private void Update()
     {

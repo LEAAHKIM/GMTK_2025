@@ -57,9 +57,11 @@ public class LevelManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         _isLoading = false;
+        Debug.Log(">>> OnSceneLoaded called");
         collectibleAmount = FindObjectsOfType<Collectible>().Length;
         Debug.Log($"Scene loaded: {scene.name}, collectibles found: {collectibleAmount}");
     }
+
 
     private void Start()
     {
