@@ -56,7 +56,6 @@ public class CameraMovement : MonoBehaviour
     public float bgSize;
     public Sprite bgSprite;
     private float cameraStartSize;
-    SpriteRenderer[] backgrounds;
     private float _cameraCurrentSize;
 
     private InputAction moveAction;
@@ -151,22 +150,6 @@ public class CameraMovement : MonoBehaviour
         _camExtentsX = _camExtentsY * cam.aspect;
         
         levelExtents = LevelManager.current.currentLevelExtents * 3;
-        backgrounds = new SpriteRenderer[9];
-        for (int i = -1; i <= 1; i++)
-        {
-            for (int j = -1; j <= 1; j++)
-            {
-                
-                GameObject a = new GameObject();
-                int idx= (i + 1)*3 + j + 1;
-                backgrounds[idx] = a.AddComponent<SpriteRenderer>();
-                if (j != 0) { backgrounds[idx].flipY = true; }
-                if (i != 0) { backgrounds[idx].flipX = true; }
-                backgrounds[idx].sprite = bgSprite;
-                backgrounds[idx].transform.localScale = Vector3.one * bgSize;
-                backgrounds[idx].sortingOrder = -10;
-            }
-        }
     }
     public void SetCameraSize(float h)
     {
@@ -236,23 +219,6 @@ public class CameraMovement : MonoBehaviour
         transform.position = new Vector3(smoothDampX, smoothDampY, transform.position.z);
         _lastTargetPos = targetPos; 
         float scaleChange = _cameraCurrentSize / cameraStartSize;
-
-        float newBgSize = bgSize * scaleChange;
-        for (int i = -1; i <= 1; i++)
-        {
-            for (int j = -1; j <= 1; j++)
-            {
-                int idx = (i + 1) * 3 + j + 1;
-                Vector3 parallaxOffset = ((Vector3)realPositionOffset - transform.position);
-                parallaxOffset.x *= parallaxMultX;
-                parallaxOffset.y *= parallaxMultY;
-
-                backgrounds[idx].transform.localScale = newBgSize*Vector3.one;
-                backgrounds[idx].transform.position = transform.position + parallaxOffset + new Vector3(i * newBgSize, j * newBgSize, 0);
-
-
-            }
-        }
     }
 
     private void OnDrawGizmos()

@@ -13,7 +13,7 @@ public class PlatformScript : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if ( (LevelManager.current.playerMovement.transform.position.y-.55f) >= (transform.position.y+colExtents.y+_col.offset.y)) { _col.enabled = true; }
+        if ( (LevelManager.current.playerMovement.transform.position.y-.45f) >= (transform.position.y+colExtents.y+_col.offset.y)) { _col.enabled = true; }
         else { _col.enabled = false; }
         if (LevelManager.current.goDownInput) { _col.enabled = false; }
     }

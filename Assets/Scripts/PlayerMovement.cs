@@ -5,8 +5,8 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     //includes movingplatform layer too since it moves as well
-    const int GROUNDLAYER = (1 << 6);
-    const int MOVINGPLATFORMLAYER = (1 << 7);
+    public const int GROUNDLAYER = (1 << 6);
+    public const int MOVINGPLATFORMLAYER = (1 << 7);
 
 
     [HideInInspector] public Rigidbody2D _rb;
