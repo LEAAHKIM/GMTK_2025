@@ -3,7 +3,7 @@ using UnityEngine;
 public class CameraMovement : MonoBehaviour
 {
     //singleteon class
-    public CameraMovement current;
+    public static CameraMovement current;
 
     public Camera cam;
     private float _camExtentsX;
@@ -45,13 +45,22 @@ public class CameraMovement : MonoBehaviour
 
     //i currently disabled this because it doesnt feel good
     public float mouseLookAheadWeight;
-
+    
     //for debugging
     private Vector2 _lastTargetPos;
 
+    public Vector2 realPositionOffset;
+    public float parallaxMultX;
+    public float parallaxMultY;
+    public float bgSize;
+    public Sprite bgSprite;
+    private float cameraStartSize;
+    SpriteRenderer[] backgrounds;
+    private float _cameraCurrentSize;
     private void Awake()
     {
         cam = GetComponent<Camera>();
+        cameraStartSize = cam.orthographicSize;
         current = this;
     }
     // i know this is terrible but there is only 1 day left. i hope no one sees this
@@ -61,6 +70,7 @@ public class CameraMovement : MonoBehaviour
         {
             _cameraTargetPos += offset;
             _deadBoxPos += offset;
+            realPositionOffset += offset;
         }
     }
     private void Start()
@@ -72,12 +82,29 @@ public class CameraMovement : MonoBehaviour
         InputSystem.current.actions.Player.Move.canceled += ctx => { _movementXInput = 0; };
         InputSystem.current.actions.Player.Look.performed += ctx => { mousePos = ctx.ReadValue<Vector2>(); mouseWorldPos = cam.ScreenToWorldPoint(mousePos); };
         levelExtents = LevelManager.current.currentLevelExtents * 3;
+        backgrounds = new SpriteRenderer[9];
+        for (int i = -1; i <= 1; i++)
+        {
+            for (int j = -1; j <= 1; j++)
+            {
+                
+                GameObject a = new GameObject();
+                int idx= (i + 1)*3 + j + 1;
+                backgrounds[idx] = a.AddComponent<SpriteRenderer>();
+                if (j != 0) { backgrounds[idx].flipY = true; }
+                if (i != 0) { backgrounds[idx].flipX = true; }
+                backgrounds[idx].sprite = bgSprite;
+                backgrounds[idx].transform.localScale = Vector3.one * bgSize;
+                backgrounds[idx].sortingOrder = -10;
+            }
+        }
     }
     public void SetCameraSize(float h)
     {
         cam.orthographicSize = h;
         _camExtentsY = cam.orthographicSize;
         _camExtentsX = _camExtentsY * cam.aspect;
+        _cameraCurrentSize = h;
     }
     float SignWith0(float v)
     {
@@ -138,7 +165,25 @@ public class CameraMovement : MonoBehaviour
         float smoothDampX = Mathf.SmoothDamp(transform.position.x, _cameraTargetPos.x, ref _currentCameraVelX, currentCameraSmoothX, Mathf.Infinity, Time.deltaTime);
         float smoothDampY = Mathf.SmoothDamp(transform.position.y, _cameraTargetPos.y, ref _currentCameraVelY, currentCameraSmoothY, Mathf.Infinity, Time.deltaTime);
         transform.position = new Vector3(smoothDampX, smoothDampY, transform.position.z);
-        _lastTargetPos = targetPos;
+        _lastTargetPos = targetPos; 
+        float scaleChange = _cameraCurrentSize / cameraStartSize;
+
+        float newBgSize = bgSize * scaleChange;
+        for (int i = -1; i <= 1; i++)
+        {
+            for (int j = -1; j <= 1; j++)
+            {
+                int idx = (i + 1) * 3 + j + 1;
+                Vector3 parallaxOffset = ((Vector3)realPositionOffset - transform.position);
+                parallaxOffset.x *= parallaxMultX;
+                parallaxOffset.y *= parallaxMultY;
+
+                backgrounds[idx].transform.localScale = newBgSize*Vector3.one;
+                backgrounds[idx].transform.position = transform.position + parallaxOffset + new Vector3(i * newBgSize, j * newBgSize, 0);
+
+
+            }
+        }
     }
 
     private void OnDrawGizmos()

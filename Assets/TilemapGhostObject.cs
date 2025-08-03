@@ -19,6 +19,7 @@ public class TilemapGhostObject : MonoBehaviour
     (int)(LevelManager.current.currentLevelExtents.y * 2),
     1
 );
+        tilemap.CompressBounds();
 
         BoundsInt bounds = new BoundsInt(tilemap.origin, levelSize) ; // new BoundsInt(Vector3Int.zero, new Vector3Int( levelSize.x, levelSize.y, 1));
         TileBase[] a = tilemap.GetTilesBlock(bounds);

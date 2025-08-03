@@ -80,6 +80,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""GoDown"",
+                    ""type"": ""Button"",
+                    ""id"": ""74ef0a2e-ad1c-40f4-a3c8-c0080b35fe75"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -214,6 +223,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""action"": ""ZoomOutKey"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bc8d9a19-44df-4500-aeb1-9ffe570f51b4"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GoDown"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -228,6 +248,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_MovingPlatformMove = m_Player.FindAction("MovingPlatformMove", throwIfNotFound: true);
         m_Player_InteractKeyPressed = m_Player.FindAction("InteractKeyPressed", throwIfNotFound: true);
         m_Player_ZoomOutKey = m_Player.FindAction("ZoomOutKey", throwIfNotFound: true);
+        m_Player_GoDown = m_Player.FindAction("GoDown", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -295,6 +316,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_MovingPlatformMove;
     private readonly InputAction m_Player_InteractKeyPressed;
     private readonly InputAction m_Player_ZoomOutKey;
+    private readonly InputAction m_Player_GoDown;
     public struct PlayerActions
     {
         private @InputSystem_Actions m_Wrapper;
@@ -305,6 +327,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         public InputAction @MovingPlatformMove => m_Wrapper.m_Player_MovingPlatformMove;
         public InputAction @InteractKeyPressed => m_Wrapper.m_Player_InteractKeyPressed;
         public InputAction @ZoomOutKey => m_Wrapper.m_Player_ZoomOutKey;
+        public InputAction @GoDown => m_Wrapper.m_Player_GoDown;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -332,6 +355,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @ZoomOutKey.started += instance.OnZoomOutKey;
             @ZoomOutKey.performed += instance.OnZoomOutKey;
             @ZoomOutKey.canceled += instance.OnZoomOutKey;
+            @GoDown.started += instance.OnGoDown;
+            @GoDown.performed += instance.OnGoDown;
+            @GoDown.canceled += instance.OnGoDown;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -354,6 +380,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @ZoomOutKey.started -= instance.OnZoomOutKey;
             @ZoomOutKey.performed -= instance.OnZoomOutKey;
             @ZoomOutKey.canceled -= instance.OnZoomOutKey;
+            @GoDown.started -= instance.OnGoDown;
+            @GoDown.performed -= instance.OnGoDown;
+            @GoDown.canceled -= instance.OnGoDown;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -379,5 +408,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         void OnMovingPlatformMove(InputAction.CallbackContext context);
         void OnInteractKeyPressed(InputAction.CallbackContext context);
         void OnZoomOutKey(InputAction.CallbackContext context);
+        void OnGoDown(InputAction.CallbackContext context);
     }
 }

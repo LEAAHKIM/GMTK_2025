@@ -11,6 +11,8 @@ public class LevelManager : MonoBehaviour
         PlayerControl = 0,
         MovingPlatform = 1
     }
+    public float collectibleAmount = 0;
+
     public GameState currentGameState = GameState.PlayerControl;
     public Vector2 currentLevelExtents;
 
@@ -33,6 +35,7 @@ public class LevelManager : MonoBehaviour
     private float _cameraStartSize;
     public float cameraZoomOutSpeed;
     public float cameraZoomOutSize;
+    public bool goDownInput;
     private void Awake()
     {
         current = this;
@@ -46,6 +49,9 @@ public class LevelManager : MonoBehaviour
 
         InputSystem.current.actions.Player.ZoomOutKey.performed += ctx => { zoomOutInput = true; };
         InputSystem.current.actions.Player.ZoomOutKey.canceled += ctx => { zoomOutInput = false; };
+
+        InputSystem.current.actions.Player.GoDown.performed += ctx => { goDownInput = true; };
+        InputSystem.current.actions.Player.GoDown.canceled += ctx => { goDownInput= false; };
         currentGameState = GameState.PlayerControl;
 
         _cameraStartSize = cameraMovement.cam.orthographicSize;
@@ -116,6 +122,12 @@ public class LevelManager : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        if(collectibleAmount<=0)
+        {
+            Debug.Log("level end");
+            //end level and go to the next one
+        }
+
         ApplyLevelLooping();
         switch (currentGameState)
         {

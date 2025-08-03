@@ -5,8 +5,11 @@ using UnityEngine;
 // for static ghost objects
 public class GhostObjectStatic : MonoBehaviour
 {
+    GameObject[] _gameObjects;
     private void Start()
     {
+        int idx = 0;
+        _gameObjects = new GameObject[8];
         for (int i = -1; i <= 1; i++)
         {
             for (int j = -1; j <= 1; j++)
@@ -30,7 +33,17 @@ public class GhostObjectStatic : MonoBehaviour
                 a.transform.position = transform.position + (Vector3)offset;
                 a.transform.localScale = transform.localScale;
                 a.transform.localRotation = transform.localRotation;
+
+                _gameObjects[idx] = a;
+                idx++;
             }
+        }
+    }
+    private void OnDestroy()
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            Destroy(_gameObjects[i]);
         }
     }
 }
