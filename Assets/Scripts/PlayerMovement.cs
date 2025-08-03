@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -74,6 +75,9 @@ public class PlayerMovement : MonoBehaviour
     public Transform spriteRendererTransform;
     private float lastFixedUpdateTime;
 
+    private InputAction moveAction;
+    private InputAction jumpAction;
+
 
     //CHARACTER TALK STUFF
     public List<AudioClip> jumpAudios;  
@@ -92,6 +96,63 @@ public class PlayerMovement : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
     }
+    private void OnEnable()
+    {
+        var actionAsset = InputSystem.current?.actions;
+        if (actionAsset == null) return;
+
+        moveAction = actionAsset.FindAction("Player/Move");
+        jumpAction = actionAsset.FindAction("Player/Jump");
+
+        if (moveAction != null)
+        {
+            moveAction.performed += OnMovePerformed;
+            moveAction.canceled += OnMoveCanceled;
+        }
+
+        if (jumpAction != null)
+        {
+            jumpAction.performed += OnJumpPerformed;
+            jumpAction.canceled += OnJumpCanceled;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (moveAction != null)
+        {
+            moveAction.performed -= OnMovePerformed;
+            moveAction.canceled -= OnMoveCanceled;
+        }
+
+        if (jumpAction != null)
+        {
+            jumpAction.performed -= OnJumpPerformed;
+            jumpAction.canceled -= OnJumpCanceled;
+        }
+    }
+
+    private void OnMovePerformed(InputAction.CallbackContext ctx)
+    {
+        _movementInput = ctx.ReadValue<float>();
+    }
+
+private void OnMoveCanceled(InputAction.CallbackContext ctx)
+    {
+        _movementInput = 0;
+    }
+
+private void OnJumpPerformed(InputAction.CallbackContext ctx)
+    {
+        _jumpPressInput = true;
+        _jumpHoldInput = true;
+    }
+
+    private void OnJumpCanceled(InputAction.CallbackContext ctx)
+    {
+        _jumpHoldInput = false;
+    }
+
     private void Start()
     {
         _prevPosition = transform.position;
@@ -100,10 +161,6 @@ public class PlayerMovement : MonoBehaviour
         if (jumpApexTime <= 0) { Debug.LogError("jumpapextime can't be negative or 0"); }
         _gravity = (2 * jumpHeight) / (jumpApexTime * jumpApexTime);
         _initialJumpVelocity = (2 * jumpHeight) / jumpApexTime;
-        InputSystem.current.actions.Player.Move.performed += ctx => { _movementInput = ctx.ReadValue<float>(); };
-        InputSystem.current.actions.Player.Move.canceled += ctx => { _movementInput = 0; };
-        InputSystem.current.actions.Player.Jump.performed += ctx => { _jumpPressInput = true; _jumpHoldInput = true; };
-        InputSystem.current.actions.Player.Jump.canceled += ctx => { _jumpHoldInput = false; };
         _ghosts = new SpriteRenderer[8];
         for (int i = 0; i < 8; i++)
         {

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraMovement : MonoBehaviour
 {
@@ -57,12 +58,82 @@ public class CameraMovement : MonoBehaviour
     private float cameraStartSize;
     SpriteRenderer[] backgrounds;
     private float _cameraCurrentSize;
+
+    private InputAction moveAction;
+    private InputAction lookAction;
+
     private void Awake()
     {
+        if (current != null && current != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        current = this;
         cam = GetComponent<Camera>();
         cameraStartSize = cam.orthographicSize;
-        current = this;
     }
+
+    private void OnEnable()
+    {
+        var actionAsset = InputSystem.current?.actions;
+        if (actionAsset == null) return;
+
+        moveAction = actionAsset.FindAction("Player/Move");
+        lookAction = actionAsset.FindAction("Player/Look");
+
+        if (moveAction != null)
+        {
+            moveAction.Enable(); // Important: enable it
+            moveAction.performed += OnMovePerformed;
+            moveAction.canceled += OnMoveCanceled;
+        }
+
+        if (lookAction != null)
+        {
+            lookAction.Enable(); // Important: enable it
+            lookAction.performed += OnLookPerformed;
+        }
+    }
+
+
+    private void OnDisable()
+    {
+        if (moveAction != null)
+        {
+            moveAction.performed -= OnMovePerformed;
+            moveAction.canceled -= OnMoveCanceled;
+            moveAction.Disable();
+        }
+
+        if (lookAction != null)
+        {
+            lookAction.performed -= OnLookPerformed;
+            lookAction.Disable();
+        }
+    }
+
+
+    private void OnMovePerformed(InputAction.CallbackContext ctx)
+    {
+        _movementXInput = ctx.ReadValue<float>();
+    }
+
+    private void OnMoveCanceled(InputAction.CallbackContext ctx)
+    {
+        _movementXInput = 0;
+    }
+
+    private void OnLookPerformed(InputAction.CallbackContext ctx)
+    {
+        if (cam == null) return;
+
+        mousePos = ctx.ReadValue<Vector2>();
+        mouseWorldPos = cam.ScreenToWorldPoint(mousePos);
+    }
+
+
     // i know this is terrible but there is only 1 day left. i hope no one sees this
     public void OffsetCameraTargetPos(Vector2 offset, bool actuallyOffset)
     {
@@ -78,9 +149,7 @@ public class CameraMovement : MonoBehaviour
         // not really cam height, cam height / 2. add this up/down to get the position of cam bounds
         _camExtentsY = cam.orthographicSize;
         _camExtentsX = _camExtentsY * cam.aspect;
-        InputSystem.current.actions.Player.Move.performed += ctx => { _movementXInput = ctx.ReadValue<float>(); };
-        InputSystem.current.actions.Player.Move.canceled += ctx => { _movementXInput = 0; };
-        InputSystem.current.actions.Player.Look.performed += ctx => { mousePos = ctx.ReadValue<Vector2>(); mouseWorldPos = cam.ScreenToWorldPoint(mousePos); };
+        
         levelExtents = LevelManager.current.currentLevelExtents * 3;
         backgrounds = new SpriteRenderer[9];
         for (int i = -1; i <= 1; i++)

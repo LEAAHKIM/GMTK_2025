@@ -10,6 +10,7 @@ public class Home : MonoBehaviour
     public AudioClip onClickPlay;
     public GameObject menuButton;
     public GameObject menuPanel;
+    
     public void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
