@@ -104,8 +104,9 @@ public class LevelManager : MonoBehaviour
 
         void MovePlatform()
         {
-            _currentMovingPlatform.spriteTransform.position =
-    Vector2.Lerp(_currentMovingPlatform._positions[currentPlatformIndex - 2], _currentMovingPlatform._positions[currentPlatformIndex - 1], (Time.time - _lastFUpdateTime) / 0.02f);
+            if (currentPlatformIndex < 2) { return; }
+            _currentMovingPlatform.spriteTransform.position = Vector2.Lerp(_currentMovingPlatform._positions[currentPlatformIndex - 2], _currentMovingPlatform._positions[currentPlatformIndex - 1], (Time.time - _lastFUpdateTime) / 0.02f);
+
         }
         void PlayerControl()
         {
@@ -161,7 +162,11 @@ public class LevelManager : MonoBehaviour
             Vector2 dir;
             if (moveMovingPlatformInput.magnitude > 0) { dir = moveMovingPlatformInput.normalized; }
             else { dir = Vector2.zero; return; }
-            _currentMovingPlatform.transform.position = _currentMovingPlatform.transform.position + (Vector3)(dir * (_currentMovingPlatform.platformMoveSpeed * Time.fixedDeltaTime));
+            Vector3 newPos = _currentMovingPlatform.transform.position + (Vector3)(dir * (_currentMovingPlatform.platformMoveSpeed * Time.fixedDeltaTime));
+            BoxCollider2D boxCol = _currentMovingPlatform.GetComponent<BoxCollider2D>();
+            if (Physics2D.BoxCast(newPos + (Vector3)boxCol.offset, boxCol.size, 0, Vector2.zero, 0, PlayerMovement.GROUNDLAYER )) { return; }
+
+            _currentMovingPlatform.transform.position = newPos;
             _currentMovingPlatformPos = _currentMovingPlatform.transform.position;
             _currentMovingPlatform._positions[currentPlatformIndex] = _currentMovingPlatformPos;
             currentPlatformIndex++;
