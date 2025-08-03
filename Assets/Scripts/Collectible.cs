@@ -6,7 +6,7 @@ public class Collectible : MonoBehaviour
 {
     private void Start()
     {
-        LevelManager.current.collectibleAmount++;
+        //LevelManager.current.collectibleAmount++;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {

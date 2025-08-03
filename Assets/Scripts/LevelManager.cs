@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 //handles looping & 
 public class LevelManager : MonoBehaviour
@@ -28,10 +29,9 @@ public class LevelManager : MonoBehaviour
     private int currentPlatformSize;
     private float _lastFUpdateTime;
 
+
     public bool zoomOutInput;
 
-    public GameObject timeLeftGameObject;
-    public TMPro.TextMeshProUGUI timeLeftText;
     private float _cameraStartSize;
     public float cameraZoomOutSpeed;
     public float cameraZoomOutSize;
@@ -39,11 +39,30 @@ public class LevelManager : MonoBehaviour
     private void Awake()
     {
         current = this;
+        _playerTransform = playerMovement.transform;
     }
+    
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    
+    public bool _isLoading = false;
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        _isLoading = false;  
+        collectibleAmount = FindObjectsOfType<Collectible>().Length;
+        Debug.Log($"Scene loaded: {scene.name}, collectibles found: {collectibleAmount}");
+    }
+
     private void Start()
     {
-        timeLeftGameObject.SetActive(false);
-        _playerTransform = playerMovement.transform;
         InputSystem.current.actions.Player.MovingPlatformMove.performed += ctx => { moveMovingPlatformInput = ctx.ReadValue<Vector2>(); };
         InputSystem.current.actions.Player.MovingPlatformMove.canceled += ctx => { moveMovingPlatformInput = Vector2.zero; };
 
@@ -51,7 +70,7 @@ public class LevelManager : MonoBehaviour
         InputSystem.current.actions.Player.ZoomOutKey.canceled += ctx => { zoomOutInput = false; };
 
         InputSystem.current.actions.Player.GoDown.performed += ctx => { goDownInput = true; };
-        InputSystem.current.actions.Player.GoDown.canceled += ctx => { goDownInput= false; };
+        InputSystem.current.actions.Player.GoDown.canceled += ctx => { goDownInput = false; };
         currentGameState = GameState.PlayerControl;
 
         _cameraStartSize = cameraMovement.cam.orthographicSize;
@@ -59,9 +78,22 @@ public class LevelManager : MonoBehaviour
         if (width > currentLevelExtents.x) { cameraZoomOutSize = currentLevelExtents.y; }
         else { cameraZoomOutSize = currentLevelExtents.x * (1.0f / cameraMovement.cam.aspect); }
     }
+    public void LoadNextLevel()
+    {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        int nextSceneIndex = currentSceneIndex + 1;
+
+        if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
+        {
+            SceneManager.LoadScene(nextSceneIndex);
+        }
+        else
+        {
+            Debug.Log("No more levels to load.");
+        }
+    }
     public void LoopCreateMovingPlatform(MovingPlatform p)
     {
-        timeLeftGameObject.SetActive(true);
         _currentMovingPlatform = p;
         _currentMovingPlatformPos = p.transform.position;
         currentGameState = GameState.MovingPlatform;
@@ -72,11 +104,9 @@ public class LevelManager : MonoBehaviour
         cameraMovement.target = p.spriteTransform;
         playerMovement.FreezePlayerMovement();
         p.HideGhostPlaftorms();
-        timeLeftText.text = p.platformMoveTime.ToString("F1");
     }
     public void StopMovingPlatform()
     {
-        timeLeftGameObject.SetActive(false);
         _currentMovingPlatform.StartMovement();
         _currentMovingPlatform.UnhideGhostPlaftorms();
         _currentMovingPlatform = null;
@@ -122,11 +152,6 @@ public class LevelManager : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if(collectibleAmount<=0)
-        {
-            Debug.Log("level end");
-            //end level and go to the next one
-        }
 
         ApplyLevelLooping();
         switch (currentGameState)
@@ -165,15 +190,12 @@ public class LevelManager : MonoBehaviour
             _currentMovingPlatformPos = _currentMovingPlatform.transform.position;
             _currentMovingPlatform._positions[currentPlatformIndex] = _currentMovingPlatformPos;
             currentPlatformIndex++;
-            float timeLeft = _currentMovingPlatform.platformMoveTime - ((((float)currentPlatformIndex + 1) / (float)currentPlatformSize) * _currentMovingPlatform.platformMoveTime);
-            timeLeftText.text = timeLeft.ToString("F1");
             if (currentPlatformIndex >= currentPlatformSize) { StopMovingPlatform(); }
             _lastFUpdateTime = Time.time;
 
         }
+        
     }
-
-
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
