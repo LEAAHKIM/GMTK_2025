@@ -2445,6 +2445,18 @@ PrefabInstance:
       propertyPath: m_margin.z
       value: -0.59744954
       objectReference: {fileID: 0}
+    - target: {fileID: 6910553485234692800, guid: ec4ce4fdd08ffb14eaee6b4293ca62dd, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: d40f0f28b63b84754a00f59b8bdce956, type: 2}
+    - target: {fileID: 6910553485234692800, guid: ec4ce4fdd08ffb14eaee6b4293ca62dd, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -5136476724677486674, guid: d40f0f28b63b84754a00f59b8bdce956, type: 2}
+    - target: {fileID: 6910553485234692800, guid: ec4ce4fdd08ffb14eaee6b4293ca62dd, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7359931281279217994, guid: ec4ce4fdd08ffb14eaee6b4293ca62dd, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
